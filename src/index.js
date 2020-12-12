@@ -1,1 +1,2 @@
-import './styles.scss';
+import './styles/styles.scss';
+import './scripts/world-map';
