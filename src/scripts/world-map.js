@@ -1,4 +1,5 @@
-import CountriesCoord from './countries.json';
+import CountriesCoord from './coordinates-countries.json';
+import checkLocalStorageData from './checkLocalStorageData';
 
 export default class WorldMap {
   constructor() {
@@ -17,44 +18,10 @@ export default class WorldMap {
       accessToken: 'pk.eyJ1IjoiaWxsZW5hdGEiLCJhIjoiY2tpbHlheTNvMG1kejJzbGJ3d2MwZnJvdiJ9.VwLkkDFOzY09RruFl0u9dQ',
     }).addTo(this.mymap);
 
-    this.checkDay();
+    checkLocalStorageData();
     this.getUnitForRadiusOfMarkerSize();
     this.getCoordinates();
-  }
-
-  checkDay() {
-    const fullDate = new Date();
-    const currentDay = fullDate.toLocaleDateString();
-    const someDay = localStorage.getItem('dayStorage');
-    console.log(currentDay, someDay);
-
-    if (someDay === null || someDay !== currentDay) {
-      localStorage.setItem('dayStorage', currentDay);
-      console.log('update');
-      this.getCovidData();
-    } else if (someDay === currentDay) {
-      console.log('current date');
-      this.getCovidData();
-    }
-  }
-
-  getCovidData() {
-    if (this.covidData !== null) {
-      console.log('данные в сторейдж есть');
-    } else {
-      console.log('упс, данных нема, придется дергать API');
-      this.getCountries();
-    }
-    // console.log(`локалсторейдж данные ковид ${covidData}`);
-  }
-
-  async getCountries() {
-    const url = 'https://api.covid19api.com/summary';
-    const response = await fetch(url);
-    const data = await response.json();
-
-    localStorage.setItem('covidDataStorage', JSON.stringify(data));
-    console.log('дергаю API');
+    this.createLegend();
   }
 
   getUnitForRadiusOfMarkerSize() {
@@ -62,6 +29,7 @@ export default class WorldMap {
       const maxSize = 1500000;
       if (this.covidData.Countries[i].CountryCode === 'US') {
         this.unitForRadiusOfMarkerSize = maxSize / this.covidData.Countries[i].TotalConfirmed;
+        break;
       }
     }
   }
@@ -80,8 +48,37 @@ export default class WorldMap {
             radius: sizeOfRadius,
           });
           circle.addTo(this.mymap);
+          circle.bindTooltip(`<b>${this.covidData.Countries[i].Country}</b>
+            <br>Cases: ${this.covidData.Countries[i].TotalConfirmed}`);
         }
       }
     }
+  }
+
+  createLegend() {
+    const legend = L.control({ position: 'bottomleft' });
+
+    legend.onAdd = () => {
+      const div = L.DomUtil.create('div', 'info legend');
+      const items = ['Cases', 'Recovered', 'Deaths'];
+
+      for (let i = 0; i < items.length; i += 1) {
+        const stringWrapper = document.createElement('div');
+        stringWrapper.classList.add('string-wrapper');
+        div.append(stringWrapper);
+
+        const markerColor = document.createElement('i');
+        markerColor.classList.add(items[i].toLowerCase());
+        stringWrapper.append(markerColor);
+
+        const p = document.createElement('p');
+        stringWrapper.append(p);
+        p.innerText = items[i];
+      }
+
+      return div;
+    };
+
+    legend.addTo(this.mymap);
   }
 }
