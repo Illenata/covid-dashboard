@@ -66,6 +66,30 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      "./images/layers.png$": path.resolve(
+        __dirname,
+        "./node_modules/leaflet/dist/images/layers.png"
+      ),
+      "./images/layers-2x.png$": path.resolve(
+          __dirname,
+          "./node_modules/leaflet/dist/images/layers-2x.png"
+      ),
+      "./images/marker-icon.png$": path.resolve(
+          __dirname,
+          "./node_modules/leaflet/dist/images/marker-icon.png"
+      ),
+      "./images/marker-icon-2x.png$": path.resolve(
+          __dirname,
+          "./node_modules/leaflet/dist/images/marker-icon-2x.png"
+      ),
+      "./images/marker-shadow.png$": path.resolve(
+          __dirname,
+          "./node_modules/leaflet/dist/images/marker-shadow.png"
+      ),
+      "./leaflet.toolbar.js": path.resolve(
+          __dirname,
+          "node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"
+      )
     },
   },
   optimization: optimization(),
@@ -94,10 +118,6 @@ module.exports = {
           from: path.resolve(__dirname, 'src/assets/img'),
           to: path.resolve(__dirname, 'dist/img'),
         },
-        // {
-        //   from: path.resolve(__dirname, 'src/assets/audio'),
-        //   to: path.resolve(__dirname, 'dist/audio'),
-        // },
       ],
     }),
     new MiniCssExtractPlugin({

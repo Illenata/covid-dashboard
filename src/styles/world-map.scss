@@ -5,7 +5,7 @@
 }
 
 .legend {
-  padding: .5rem;
+  padding: 1rem;
   border-radius: .3rem;
   background-color: rgba(255, 255, 255, 0.75);
   line-height: 18px;
@@ -21,7 +21,6 @@
     width: 18px;
     height: 18px;
     float: left;
-    margin-right: .4rem;
     opacity: 0.7;
     border-radius: 50%;
   }
@@ -35,10 +34,10 @@
   }
 
   .deaths {
-    background-color: grey;
+    background-color: black;
   }
 
-  // p {
-  //   line-height: 2rem;
-  // }
+  p {
+    margin: .4rem;
+  }
 }
