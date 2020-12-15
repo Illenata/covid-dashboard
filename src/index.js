@@ -1,2 +1,5 @@
 import './styles/styles.scss';
-import './scripts/world-map';
+import WorldMap from './scripts/world-map';
+
+const worldMap = new WorldMap();
+worldMap.init();

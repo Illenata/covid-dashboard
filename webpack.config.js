@@ -56,7 +56,7 @@ module.exports = {
   context: path.resolve(__dirname, 'src'),
   mode: 'development',
   entry: {
-    main: ['@babel/polyfill', './index.js'],
+    main: ['webpack/hot/dev-server', '@babel/polyfill', './index.js'],
   },
   output: {
     filename: '[name].[contenthash].js',
@@ -73,6 +73,7 @@ module.exports = {
     port: 4200,
     open: true,
     hot: isDev,
+    injectHot: (compilerConfig) => compilerConfig.name === 'only-include',
   },
   devtool: sourceMap(),
   plugins: [
