@@ -1,4 +1,4 @@
-export default async function getDataFromAPI() {
+export default async function getCovidDataFromAPI() {
   const url = 'https://api.covid19api.com/summary';
   const response = await fetch(url);
   const data = await response.json();
