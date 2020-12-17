@@ -1,5 +1,6 @@
 import getCovidDataFromAPI from './getCovidDataFromAPI';
-import getPopulationFlafAPI from './getPopulationFlagAPI';
+import getFlagAPI from './getFlagAPI';
+import getPopulationAPI from './getPopulationAPI';
 
 export default function ckeckLocalStorageData() {
   const fullDate = new Date();
@@ -7,7 +8,8 @@ export default function ckeckLocalStorageData() {
   const storageDay = localStorage.getItem('dayStorage');
 
   const covidData = JSON.parse(localStorage.getItem('covidDataStorage'));
-  const populationFlag = JSON.parse(localStorage.getItem('countryPopulationFlag'));
+  const flag = JSON.parse(localStorage.getItem('countryFlag'));
+  const population = JSON.parse(localStorage.getItem('countryPopulation'));
   // console.log(currentDay, storageDay);
 
   if (covidData === null || storageDay === null || storageDay !== currentDay) {
@@ -16,8 +18,11 @@ export default function ckeckLocalStorageData() {
     getCovidDataFromAPI();
   }
 
-  if (populationFlag === null) {
-    getPopulationFlafAPI();
+  if (flag === null) {
+    getFlagAPI();
   }
-  // console.log(populationFlag[0].population);
+
+  if (population === null) {
+    getPopulationAPI();
+  }
 }
