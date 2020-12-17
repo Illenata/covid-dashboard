@@ -9,4 +9,4 @@ lerna-debug.log*
 .vscode/
 
 # build files
-dist/
+/dist/
