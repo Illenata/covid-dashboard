@@ -10,8 +10,8 @@ export default async function getPopulationAPI() {
   // .then((response) => {
   //   console.log(response);
   // })
-    .catch((err) => {
-      console.error(err);
+    .catch(() => {
+      // console.error(err);
     });
 
   const data = await response.json();

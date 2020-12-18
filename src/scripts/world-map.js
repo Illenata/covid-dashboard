@@ -1,14 +1,16 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import '../../node_modules/leaflet-toolbar/dist/leaflet.toolbar.css';
-// import CountriesCoord from './coordinates-countries.json';
-import checkLocalStorageData from './checkLocalStorageData';
+import countryBorder from './custom.geo.json';
 
 export default class WorldMap {
-  constructor() {
+  constructor(covidData, populationCoordsData) {
     this.mymap = L.map('mapid').setView([40, 8], 2);
-    this.covidData = JSON.parse(localStorage.getItem('covidDataStorage'));
-    this.populationCoordsData = JSON.parse(localStorage.getItem('countryPopulation'));
+    this.covidData = covidData;
+    this.populationCoordsData = populationCoordsData;
+
+    this.geojson = L.geoJson(countryBorder, {
+      style: this.mapStyle(),
+    }).addTo(this.mymap);
 
     this.unitMarkerSize = 0;
 
@@ -32,19 +34,11 @@ export default class WorldMap {
       accessToken: 'pk.eyJ1IjoiaWxsZW5hdGEiLCJhIjoiY2tpbHlheTNvMG1kejJzbGJ3d2MwZnJvdiJ9.VwLkkDFOzY09RruFl0u9dQ',
     }).addTo(this.mymap);
 
-    checkLocalStorageData();
-    this.checkLoadCovidData();
-    // this.getUnitForRadiusOfMarkerSize();
-    // this.createMarkers();
+    this.createPanesCountries();
+    this.getUnitForRadiusOfMarkerSize();
+    this.createMarkers();
     this.createLegend();
     this.createNavLayers();
-  }
-
-  checkLoadCovidData() {
-    if (this.covidData !== null) {
-      this.getUnitForRadiusOfMarkerSize();
-      this.createMarkers();
-    }
   }
 
   getUnitForRadiusOfMarkerSize() {
@@ -85,97 +79,105 @@ export default class WorldMap {
   createMarkers() {
     for (let i = 0; i < this.covidData.Countries.length; i += 1) {
       for (let j = 0; j < this.populationCoordsData.length; j += 1) {
-        if (this.covidData.Countries[i].CountryCode === this.populationCoordsData[j].alpha2Code) {
-          this.addMarkers('red', this.covidData.Countries[i].TotalConfirmed, this.casesMarkersGroup, 'Cases', i, j);
-          this.addMarkers('green', this.covidData.Countries[i].TotalRecovered, this.recoveredMarkersGroup, 'Recovered', i, j);
-          this.addMarkers('black', this.covidData.Countries[i].TotalDeaths, this.deathsMarkersGroup, 'Deaths', i, j);
+        for (let k = 0; k < countryBorder.features.length; k += 1) {
+          if (this.covidData.Countries[i].CountryCode === this.populationCoordsData[j].alpha2Code
+            && this.covidData.Countries[i].CountryCode
+            === countryBorder.features[k].properties.wb_a2) {
+            this.addMarkers('red', this.covidData.Countries[i].TotalConfirmed, this.casesMarkersGroup, 'Cases', i, j);
+            this.addMarkers('green', this.covidData.Countries[i].TotalRecovered, this.recoveredMarkersGroup, 'Recovered', i, j);
+            this.addMarkers('black', this.covidData.Countries[i].TotalDeaths, this.deathsMarkersGroup, 'Deaths', i, j);
 
-          const people = this.populationCoordsData[j].population;
-          const controlElem = document.querySelector('.control-layers');
+            const people = this.populationCoordsData[j].population;
+            const controlElem = document.querySelector('.control-layers');
 
-          controlElem.addEventListener('click', () => {
+            const country = this.covidData.Countries[i].Country;
+            const totalCases = this.covidData.Countries[i].TotalConfirmed;
+            const dailyCases = this.covidData.Countries[i].NewConfirmed;
+            const totalRecovered = this.covidData.Countries[i].TotalRecovered;
+            const dailyRecovered = this.covidData.Countries[i].NewRecovered;
+            const totalDeaths = this.covidData.Countries[i].TotalDeaths;
+            const dailyDeaths = this.covidData.Countries[i].NewDeaths;
+
             const minSize = 3;
+            const calculateRer100k = (data) => Math.round((data / people) * 100000);
+            const calcRadius = (data) => minSize + (data * this.unitMarkerSize);
 
-            if (this.absoluteElem.checked && this.allTimeElem.checked) {
-              this.casesMarkersGroup[i].setRadius(minSize
-                + (this.covidData.Countries[i].TotalConfirmed) * this.unitMarkerSize);
+            controlElem.addEventListener('click', () => {
+              if (this.absoluteElem.checked && this.allTimeElem.checked) {
+                this.casesMarkersGroup[i].setRadius(calcRadius(totalCases));
 
-              this.casesMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Cases: ${this.covidData.Countries[i].TotalConfirmed}`);
+                this.casesMarkersGroup[i].setPopupContent(`<b>${country}</b>
+                  <br>Cases: ${totalCases}`);
+                // this.geojson[k].setPopupContent(`<b>${country}</b>
+                //   <br>Cases: ${totalCases}`);
 
-              this.recoveredMarkersGroup[i].setRadius(minSize
-                + (this.covidData.Countries[i].TotalRecovered) * this.unitMarkerSize);
+                this.recoveredMarkersGroup[i].setRadius(calcRadius(totalRecovered));
 
-              this.recoveredMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Recovered: ${this.covidData.Countries[i].TotalRecovered}`);
+                this.recoveredMarkersGroup[i].setPopupContent(`<b>${country}</b>
+                  <br>Recovered: ${totalRecovered}`);
 
-              this.deathsMarkersGroup[i].setRadius(minSize
-                + (this.covidData.Countries[i].TotalDeaths) * this.unitMarkerSize);
+                this.deathsMarkersGroup[i].setRadius(calcRadius(totalDeaths));
 
-              this.deathsMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                    <br>Deaths: ${this.covidData.Countries[i].TotalDeaths}`);
-            } else if (this.absoluteElem.checked && this.lastDayElem.checked) {
-              this.casesMarkersGroup[i].setRadius(minSize
-                + (this.covidData.Countries[i].NewConfirmed) * this.unitMarkerSize);
+                this.deathsMarkersGroup[i].setPopupContent(`<b>${country}</b>
+                      <br>Deaths: ${totalDeaths}`);
+              } else if (this.absoluteElem.checked && this.lastDayElem.checked) {
+                this.casesMarkersGroup[i].setRadius(calcRadius(dailyCases));
 
-              this.casesMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Daily cases: ${this.covidData.Countries[i].NewConfirmed}`);
+                this.casesMarkersGroup[i].setPopupContent(`<b>${country}</b>
+                  <br>Daily cases: ${dailyCases}`);
 
-              this.recoveredMarkersGroup[i].setRadius(minSize
-                + (this.covidData.Countries[i].NewRecovered) * this.unitMarkerSize);
+                this.recoveredMarkersGroup[i].setRadius(calcRadius(dailyRecovered));
 
-              this.recoveredMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Daily recovered: ${this.covidData.Countries[i].NewRecovered}`);
+                this.recoveredMarkersGroup[i].setPopupContent(`<b>${country}</b>
+                  <br>Daily recovered: ${dailyRecovered}`);
 
-              this.deathsMarkersGroup[i].setRadius(minSize
-                + (this.covidData.Countries[i].NewDeaths) * this.unitMarkerSize);
+                this.deathsMarkersGroup[i].setRadius(calcRadius(dailyDeaths));
 
-              this.deathsMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Daily deaths: ${this.covidData.Countries[i].NewDeaths}`);
-            } else if (this.coefElem.checked && this.allTimeElem.checked) {
-              this.casesMarkersGroup[i].setRadius(minSize
-                + ((this.covidData.Countries[i].TotalConfirmed / people) * 100000)
-                * this.unitMarkerSize);
+                this.deathsMarkersGroup[i].setPopupContent(`<b>${country}</b>
+                  <br>Daily deaths: ${dailyDeaths}`);
+              } else if (this.coefElem.checked && this.allTimeElem.checked) {
+                this.casesMarkersGroup[i].setRadius(calcRadius(calculateRer100k(totalCases)));
 
-              this.casesMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Cases per 100k: ${(this.covidData.Countries[i].TotalConfirmed / people) * 100000}`);
+                this.casesMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
+                  <br>Cases per 100k: ${calculateRer100k(totalCases)}`);
 
-              this.recoveredMarkersGroup[i].setRadius(minSize
-                + ((this.covidData.Countries[i].TotalRecovered / people) * 100000)
-                * this.unitMarkerSize);
+                this.recoveredMarkersGroup[i].setRadius(minSize
+                  + ((this.covidData.Countries[i].TotalRecovered / people) * 100000)
+                  * this.unitMarkerSize);
 
-              this.recoveredMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Recovered per 100k: ${(this.covidData.Countries[i].TotalRecovered / people) * 100000}`);
+                this.recoveredMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
+                  <br>Recovered per 100k: ${(this.covidData.Countries[i].TotalRecovered / people) * 100000}`);
 
-              this.deathsMarkersGroup[i].setRadius(minSize
-                + ((this.covidData.Countries[i].TotalDeaths / people) * 100000)
-                * this.unitMarkerSize);
+                this.deathsMarkersGroup[i].setRadius(minSize
+                  + ((this.covidData.Countries[i].TotalDeaths / people) * 100000)
+                  * this.unitMarkerSize);
 
-              this.deathsMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Deaths per 100k: ${(this.covidData.Countries[i].TotalDeaths / people) * 100000}`);
-            } else {
-              this.casesMarkersGroup[i].setRadius(minSize
-                + ((this.covidData.Countries[i].NewConfirmed / people) * 100000)
-                * this.unitMarkerSize);
+                this.deathsMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
+                  <br>Deaths per 100k: ${(this.covidData.Countries[i].TotalDeaths / people) * 100000}`);
+              } else {
+                this.casesMarkersGroup[i].setRadius(minSize
+                  + ((this.covidData.Countries[i].NewConfirmed / people) * 100000)
+                  * this.unitMarkerSize);
 
-              this.casesMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Daily cases per 100k: ${(this.covidData.Countries[i].NewConfirmed / people) * 100000}`);
+                this.casesMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
+                  <br>Daily cases per 100k: ${(this.covidData.Countries[i].NewConfirmed / people) * 100000}`);
 
-              this.recoveredMarkersGroup[i].setRadius(minSize
-                + ((this.covidData.Countries[i].NewRecovered / people) * 100000)
-                * this.unitMarkerSize);
+                this.recoveredMarkersGroup[i].setRadius(minSize
+                  + ((this.covidData.Countries[i].NewRecovered / people) * 100000)
+                  * this.unitMarkerSize);
 
-              this.recoveredMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Daily recovered per 100k: ${(this.covidData.Countries[i].NewRecovered / people) * 100000}`);
+                this.recoveredMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
+                  <br>Daily recovered per 100k: ${(this.covidData.Countries[i].NewRecovered / people) * 100000}`);
 
-              this.deathsMarkersGroup[i].setRadius(minSize
-                + ((this.covidData.Countries[i].NewDeaths / people) * 100000)
-                * this.unitMarkerSize);
+                this.deathsMarkersGroup[i].setRadius(minSize
+                  + ((this.covidData.Countries[i].NewDeaths / people) * 100000)
+                  * this.unitMarkerSize);
 
-              this.deathsMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
-                <br>Daily death per 100k: ${(this.covidData.Countries[i].NewDeaths / people) * 100000}`);
-            }
-          });
+                this.deathsMarkersGroup[i].setPopupContent(`<b>${this.covidData.Countries[i].Country}</b>
+                  <br>Daily death per 100k: ${(this.covidData.Countries[i].NewDeaths / people) * 100000}`);
+              }
+            });
+          }
         }
       }
     }
@@ -221,5 +223,48 @@ export default class WorldMap {
     };
 
     L.control.layers(overlayMaps, null, { collapsed: false }).addTo(this.mymap);
+  }
+
+  mapStyle() {
+    const myCustomStyle = {
+      stroke: true,
+      fill: true,
+      color: '#555',
+      fillColor: '#fff',
+      fillOpacity: 1,
+    };
+
+    return myCustomStyle;
+  }
+
+  createPanesCountries() {
+    this.mymap.createPane('labels');
+    this.mymap.getPane('labels').style.zIndex = 650;
+    this.mymap.getPane('labels').style.pointerEvents = 'none';
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+      attribution: '©OpenStreetMap, ©CartoDB',
+    }).addTo(this.mymap);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}.png', {
+      attribution: '©OpenStreetMap, ©CartoDB',
+      pane: 'labels',
+    }).addTo(this.mymap);
+
+    this.geojson.eachLayer((layer) => {
+      layer.bindPopup(layer.feature.properties.wb_a2);
+      layer.on('mouseover', () => {
+        layer.setStyle({
+          fillColor: 'rgb(235, 253, 133)',
+        });
+        layer.openPopup();
+      });
+      layer.on('mouseout', () => {
+        layer.closePopup();
+        this.geojson.resetStyle(layer);
+      });
+    });
+
+    this.mymap.fitBounds(this.geojson.getBounds());
   }
 }
