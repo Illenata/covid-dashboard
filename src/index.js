@@ -23,8 +23,6 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
     }),
   ]).then((responses) => Promise.all(responses.map((r) => r.json())))
     .then((data) => {
-      console.log(data[0], data[1]);
-
       const worldMap = new WorldMap(data[0], data[1]);
       worldMap.init();
       localStorage.setItem('covidDataStorage', JSON.stringify(data[0]));
@@ -32,6 +30,6 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
     });
 }
 
-if (checkLocalStorageData.loadFlag === false) { // эту часть можете переделывать
-  getFlagAPI();
+if (checkLocalStorageData.loadFlag === false) { // эту часть можно переделывать или удалить
+  getFlagAPI(); // если модуль getFlagAPI не нужен - можно удалять его
 }
