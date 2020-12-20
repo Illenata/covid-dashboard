@@ -20,7 +20,7 @@ export default class Grid {
         this.createSections('head');
       }
       if (i === 2) {
-        this.createSections('left', `${this.list}`, `${this.global}`);
+        this.createSections('left', `${this.list}`);
         this.addEvent('left');
       }
       if (i === 3) {
@@ -84,8 +84,3 @@ export default class Grid {
     this.section.classList.toggle(`${x}_full`);
   }
 }
-
-// import map from
-// import table from
-// import list from
-// import graph from

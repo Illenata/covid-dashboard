@@ -1,5 +1,5 @@
 import getCovidDataFromAPI from './getCovidDataFromAPI';
-import getPopulationFlafAPI from './getPopulationFlagAPI';
+import getPopulationFlagAPI from './getPopulationFlagAPI';
 
 export default function ckeckLocalStorageData() {
   const fullDate = new Date();
@@ -17,7 +17,7 @@ export default function ckeckLocalStorageData() {
   }
 
   if (populationFlag === null) {
-    getPopulationFlafAPI();
+    getPopulationFlagAPI();
   }
   // console.log(populationFlag[0].population);
 }

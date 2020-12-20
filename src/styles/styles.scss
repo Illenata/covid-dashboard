@@ -1,7 +1,11 @@
 @import './world-map.scss';
 @import './grid.scss';
+@import './tables.scss';
 
-html {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
   font-size: 16px;
 }
 
