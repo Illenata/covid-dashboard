@@ -6,9 +6,13 @@ html {
 }
 
 body {
+  color: #9aa9b8;
+  margin: 0;
+  padding: 0;
+}
+
+footer{
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 0;
-  padding: 0;
 }
