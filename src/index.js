@@ -2,6 +2,7 @@ import './styles/styles.scss';
 import CheckLocalStorageData from './scripts/checkLocalStorageData';
 import getFlagAPI from './scripts/getFlagAPI';
 import WorldMap from './scripts/world-map';
+import Tables from './scripts/tables';
 
 const checkLocalStorageData = new CheckLocalStorageData();
 checkLocalStorageData.init();
@@ -33,3 +34,6 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
 if (checkLocalStorageData.loadFlag === false) { // эту часть можно переделывать или удалить
   getFlagAPI(); // если модуль getFlagAPI не нужен - можно удалять его
 }
+
+const tables = new Tables();
+tables.init();
