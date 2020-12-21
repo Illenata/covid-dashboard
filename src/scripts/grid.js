@@ -4,8 +4,6 @@ export default class Grid {
   constructor() {
     this.grid = null;
     this.section = null;
-    this.global = 100000;
-    this.map = 'mapid';
     this.list = 'list';
     this.table = 'table';
     this.graph = 'graph';
@@ -18,13 +16,14 @@ export default class Grid {
     for (let i = 1; i <= 4; i += 1) {
       if (i === 1) {
         this.createSections('head');
+        this.section.innerHTML = 'COVID-19 DASHBOARD';
       }
       if (i === 2) {
         this.createSections('left', `${this.list}`);
         this.addEvent('left');
       }
       if (i === 3) {
-        this.createSections('center', `${this.map}`);
+        this.createSections('center');
         this.addEvent('center');
       }
       if (i === 4) {
@@ -53,7 +52,6 @@ export default class Grid {
     this.grid.append(this.section);
     this.section.classList.add(`${name}`);
     if (secondElement) {
-      this.addBtns(`${name}`);
       first.id = `${firstElement}`;
       second.id = `${secondElement}`;
       first.classList.add(`${firstElement}`);
@@ -63,10 +61,8 @@ export default class Grid {
       first.id = `${firstElement}`;
       first.classList.add(`${firstElement}`);
       this.section.append(first);
-      this.addBtns(`${name}`);
-    } else {
-      this.section.innerHTML = 'COVID - 19 DASHBOARD';
     }
+    this.addBtns(`${name}`);
   }
 
   addBtns(x) {

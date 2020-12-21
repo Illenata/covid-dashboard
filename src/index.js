@@ -12,15 +12,13 @@ import MapElements from './scripts/createMapElements';
 const grid = new Grid();
 grid.init();
 const area = document.querySelector('.graph');
-
-const checkLocalStorageData = new CheckLocalStorageData();
-checkLocalStorageData.init();
 const mapElements = new MapElements();
 mapElements.init();
+const checkLocalStorageData = new CheckLocalStorageData();
+checkLocalStorageData.init();
 if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation) {
   const worldMap = new WorldMap(checkLocalStorageData.covidData,
     checkLocalStorageData.population);
-
   worldMap.init();
 } else {
   Promise.all([

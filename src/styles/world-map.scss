@@ -46,6 +46,7 @@
 }
 
 .control-layers {
+  margin-top: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -110,6 +111,7 @@
   transition: all .3s;
 }
 .map-wrapper{
-  display: flex;
-  flex-direction: column;
+  margin-top: 1vh;
+  height: 70vh;
+  padding: 10px;
 }
