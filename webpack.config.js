@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HTMLWebpackPlagin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -66,30 +67,26 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
-      "./images/layers.png$": path.resolve(
+      './images/layers.png$': path.resolve(
         __dirname,
-        "./node_modules/leaflet/dist/images/layers.png"
+        './node_modules/leaflet/dist/images/layers.png',
       ),
-      "./images/layers-2x.png$": path.resolve(
-          __dirname,
-          "./node_modules/leaflet/dist/images/layers-2x.png"
+      './images/layers-2x.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/layers-2x.png',
       ),
-      "./images/marker-icon.png$": path.resolve(
-          __dirname,
-          "./node_modules/leaflet/dist/images/marker-icon.png"
+      './images/marker-icon.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/marker-icon.png',
       ),
-      "./images/marker-icon-2x.png$": path.resolve(
-          __dirname,
-          "./node_modules/leaflet/dist/images/marker-icon-2x.png"
+      './images/marker-icon-2x.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/marker-icon-2x.png',
       ),
-      "./images/marker-shadow.png$": path.resolve(
-          __dirname,
-          "./node_modules/leaflet/dist/images/marker-shadow.png"
+      './images/marker-shadow.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/marker-shadow.png',
       ),
-      "./leaflet.toolbar.js": path.resolve(
-          __dirname,
-          "node_modules/leaflet-toolbar/dist/leaflet.toolbar.js"
-      )
     },
   },
   optimization: optimization(),
@@ -124,6 +121,10 @@ module.exports = {
       filename: '[name].[contenthash].css',
     }),
     new ESLintPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
   ],
   module: {
     rules: [
