@@ -3,8 +3,12 @@
   height: 100%;
 }
 
+.leaflet-container {
+  background-color:#c5e8ff;
+}
+
 .legend {
-  padding: 1rem;
+  padding: .3rem .8rem;
   border-radius: .3rem;
   background-color: rgba(255, 255, 255, 0.75);
   line-height: 18px;
@@ -39,4 +43,69 @@
   p {
     margin: .4rem;
   }
+}
+
+.control-layers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .5rem;
+}
+
+.group-value, .group-time {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-type {
+  display: flex;
+  flex-direction: column;
+  padding: .3rem .8rem;
+  border-radius: .3rem;
+  background-color: #fff;
+  opacity: .8;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+
+  .btn {
+    margin: 0;
+  }
+
+  label {
+    margin-left: .5rem;
+    transition: all .3s;
+    cursor: pointer;
+  }
+
+  label:hover {
+    color:green;
+  }
+}
+
+.control-layers input[type=radio] {
+	display: none;
+}
+.control-layers label {
+  display: inline-block;
+  width: 13rem;
+  padding: 0px 15px;
+  background-color: rgb(46, 46, 46);
+  color: #fff;
+	line-height: 34px;
+	border: 1px solid #999;
+  border-radius: 6px;
+  transition: all .3s;
+	user-select: none;
+	cursor: pointer;
+}
+ 
+.control-layers input[type=radio]:checked + label {
+	background: #350042;
+}
+ 
+.control-layers label:hover {
+  text-shadow: 0 0 .3rem #fff;
+}
+
+.leaflet-interactive {
+  transition: all .3s;
 }

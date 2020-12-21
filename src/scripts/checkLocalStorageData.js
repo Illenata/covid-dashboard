@@ -1,23 +1,35 @@
-import getCovidDataFromAPI from './getCovidDataFromAPI';
-import getPopulationFlagAPI from './getPopulationFlagAPI';
-
-export default function ckeckLocalStorageData() {
-  const fullDate = new Date();
-  const currentDay = fullDate.toLocaleDateString();
-  const storageDay = localStorage.getItem('dayStorage');
-
-  const covidData = JSON.parse(localStorage.getItem('covidDataStorage'));
-  const populationFlag = JSON.parse(localStorage.getItem('countryPopulationFlag'));
-  // console.log(currentDay, storageDay);
-
-  if (covidData === null || storageDay === null || storageDay !== currentDay) {
-    localStorage.setItem('dayStorage', currentDay);
-    // console.log('update storage from API');
-    getCovidDataFromAPI();
+export default class ckeckLocalStorageData {
+  constructor() {
+    this.loadCovidData = false;
+    this.loadFlag = false;
+    this.loadPopulation = false;
+    this.covidData = JSON.parse(localStorage.getItem('covidDataStorage'));
+    this.flag = JSON.parse(localStorage.getItem('countryFlag'));
+    this.population = JSON.parse(localStorage.getItem('countryPopulation'));
   }
 
-  if (populationFlag === null) {
-    getPopulationFlagAPI();
+  init() {
+    const fullDate = new Date();
+    const currentDay = fullDate.toLocaleDateString();
+    const storageDay = localStorage.getItem('dayStorage');
+
+    if (this.covidData === null || storageDay === null || storageDay !== currentDay) {
+      localStorage.setItem('dayStorage', currentDay);
+      this.loadCovidData = false;
+    } else {
+      this.loadCovidData = true;
+    }
+
+    if (this.flag === null) {
+      this.loadFlag = false;
+    } else {
+      this.loadFlag = true;
+    }
+
+    if (this.population === null) {
+      this.loadPopulation = false;
+    } else {
+      this.loadPopulation = true;
+    }
   }
-  // console.log(populationFlag[0].population);
 }

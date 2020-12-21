@@ -49,6 +49,16 @@ export default class Tables {
       createOption('NewRecovered', 'New Recovered'),
     );
 
+    select.addEventListener('change', (event) => {
+      clearList();
+      changeList(event.target.value);
+      const totalNumber = document.querySelector('.total-number');
+      totalNumber.innerText = this.data.Global[event.target.value];
+      totalNumber.style = '';
+    });
+
+    selectBlock.append(select, totalNumber);
+
     // Container with cases/deaths/recovered numbers by country
     const casesByCountry = document.createElement('div');
     casesByCountry.innerHTML = `
@@ -93,15 +103,14 @@ export default class Tables {
       casesByCountry.append(casesByCountryList);
     };
 
-    select.addEventListener('change', (event) => {
-      clearList();
-      changeList(event.target.value);
-      totalNumber = document.querySelector('.total-number');
-      totalNumber.innerText = this.data.Global[event.target.value];
-      totalNumber.style = '';
-    });
-
-    selectBlock.append(select, totalNumber);
+    // Container with date of last update in the API
+    const updateDate = document.createElement('div');
+    const date = new Date(this.data.Date).toString().slice(3, 24);
+    updateDate.classList.add('update-date');
+    updateDate.innerHTML = `
+      <div>Last Updated</div>
+      <div>${date}</div>
+    `;
 
     // Fitting every element created above into the HTML
     list.append(selectBlock, casesByCountry, updateDate);

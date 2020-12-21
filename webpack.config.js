@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HTMLWebpackPlagin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -86,10 +87,6 @@ module.exports = {
         __dirname,
         './node_modules/leaflet/dist/images/marker-shadow.png',
       ),
-      './leaflet.toolbar.js': path.resolve(
-        __dirname,
-        'node_modules/leaflet-toolbar/dist/leaflet.toolbar.js',
-      ),
     },
   },
   optimization: optimization(),
@@ -124,6 +121,10 @@ module.exports = {
       filename: '[name].[contenthash].css',
     }),
     new ESLintPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
   ],
   module: {
     rules: [
