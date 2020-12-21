@@ -1,3 +1,5 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable import/no-named-as-default-member */
 import './styles/styles.scss';
 import CheckLocalStorageData from './scripts/checkLocalStorageData';
 import getFlagAPI from './scripts/getFlagAPI';
@@ -8,12 +10,8 @@ import Tables from './scripts/tables';
 
 const grid = new Grid();
 grid.init();
-
-const worldMap = new WorldMap();
-const tables = new Tables();
 const area = document.querySelector('.graph');
 
-worldMap.init();
 const checkLocalStorageData = new CheckLocalStorageData();
 checkLocalStorageData.init();
 

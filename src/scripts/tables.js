@@ -1,3 +1,5 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-use-before-define */
 /* eslint-disable no-restricted-syntax */
 export default class Tables {
   constructor() {
@@ -29,7 +31,7 @@ export default class Tables {
     const select = document.createElement('select');
     select.classList.add('select');
 
-    let totalNumber = document.createElement('p');
+    const totalNumber = document.createElement('p');
     totalNumber.classList.add('total-number');
     totalNumber.innerText = this.data.Global.TotalConfirmed;
 
@@ -68,15 +70,6 @@ export default class Tables {
 
     const casesByCountryList = document.createElement('div');
     casesByCountryList.classList.add('cases-by-country__list');
-
-    // Container with date of last update in the API
-    const updateDate = document.createElement('div');
-    const date = new Date(this.data.Date).toString().slice(3, 24);
-    updateDate.classList.add('update-date');
-    updateDate.innerHTML = `
-      <div>Last Updated</div>
-      <div>${date}</div>
-    `;
 
     const clearList = () => {
       const removingNode = document.querySelectorAll('.cases-by-country__item');
