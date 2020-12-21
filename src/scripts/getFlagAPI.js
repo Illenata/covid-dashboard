@@ -4,5 +4,4 @@ export default async function getFlagAPI() {
   const data = await response.json();
 
   localStorage.setItem('countryPopulationFlag', JSON.stringify(data));
-  // console.log('API population');
 }

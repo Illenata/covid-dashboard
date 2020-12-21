@@ -12,9 +12,9 @@ export default class Tables {
 
   async fetchDataFromAPI() {
     console.log('Fetch data from API started');
-    let response = await fetch('https://api.covid19api.com/summary');
-    let fetchedData = await response.json();
-    let fetchedDataToString = await JSON.stringify(fetchedData);
+    const response = await fetch('https://api.covid19api.com/summary');
+    const fetchedData = await response.json();
+    const fetchedDataToString = await JSON.stringify(fetchedData);
     this.data = await JSON.parse(fetchedDataToString);
   }
 
@@ -37,7 +37,7 @@ export default class Tables {
       option.value = val;
       option.innerText = inner;
       return option;
-    }
+    };
 
     select.append(
       createOption('TotalConfirmed', 'Total Confirmed'),
@@ -49,11 +49,11 @@ export default class Tables {
     );
 
     select.addEventListener('change', (event) => {
-        clearList();
-        changeList(event.target.value);
-        const totalNumber = document.querySelector('.total-number');
-        totalNumber.innerText = this.data.Global[event.target.value];
-        totalNumber.style = '';
+      clearList();
+      changeList(event.target.value);
+      const totalNumber = document.querySelector('.total-number');
+      totalNumber.innerText = this.data.Global[event.target.value];
+      totalNumber.style = '';
     });
 
     selectBlock.append(select, totalNumber);
@@ -76,10 +76,8 @@ export default class Tables {
     };
 
     const changeList = (parameter) => {
-      const dataSorted = this.data.Countries.sort((a, b) => {
-        return b[parameter] - a[parameter];
-      });
-      for (let item of dataSorted) {
+      const dataSorted = this.data.Countries.sort((a, b) => b[parameter] - a[parameter]);
+      for (const item of dataSorted) {
         const casesByCountryItem = document.createElement('div');
         casesByCountryItem.classList.add('cases-by-country__item');
         casesByCountryItem.innerHTML = `
@@ -93,11 +91,11 @@ export default class Tables {
       }
 
       casesByCountry.append(casesByCountryList);
-    }
+    };
 
     // Container with date of last update in the API
-    const updateDate = document.createElement('div'),
-      date = new Date(this.data.Date).toString().slice(3,24);
+    const updateDate = document.createElement('div');
+    const date = new Date(this.data.Date).toString().slice(3, 24);
     updateDate.classList.add('update-date');
     updateDate.innerHTML = `
       <div>Last Updated</div>
