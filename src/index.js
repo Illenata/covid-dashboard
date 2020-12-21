@@ -13,6 +13,7 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
 
   worldMap.init();
 } else {
+  console.log('map fetch API');
   Promise.all([
     fetch('https://api.covid19api.com/summary'),
     fetch('https://restcountries-v1.p.rapidapi.com/all', {
