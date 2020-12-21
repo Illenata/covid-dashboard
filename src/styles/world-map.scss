@@ -97,15 +97,19 @@
 	user-select: none;
 	cursor: pointer;
 }
- 
+
 .control-layers input[type=radio]:checked + label {
 	background: #350042;
 }
- 
+
 .control-layers label:hover {
   text-shadow: 0 0 .3rem #fff;
 }
 
 .leaflet-interactive {
   transition: all .3s;
+}
+.map-wrapper{
+  display: flex;
+  flex-direction: column;
 }

@@ -1,10 +1,6 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import countryBorder from './custom.geo.json';
-import MapElements from './createMapElements';
-
-const mapElements = new MapElements();
-mapElements.init();
 
 export default class WorldMap {
   constructor(covidData, populationCoordsData) {
