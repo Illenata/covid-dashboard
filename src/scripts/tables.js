@@ -6,19 +6,46 @@ export default class Tables {
   }
 
   async init() {
-    this.fetchDataFromAPI().then(() => {
-      // console.log(this.data);
+    this.getData().then(() => {
       this.renderList();
       this.renderTable(0);
     });
   }
 
-  async fetchDataFromAPI() {
-    console.log('Fetch data from API started');
-    const response = await fetch('https://api.covid19api.com/summary');
-    const fetchedData = await response.json();
-    const fetchedDataToString = await JSON.stringify(fetchedData);
-    this.data = await JSON.parse(fetchedDataToString);
+  calculatePer100k(population, casesValue) {
+    return Math.ceil(casesValue / (population / 100000));
+  }
+  calculateGlobalPer100k(casesValue) {
+    return Math.ceil(casesValue / (7594000000 / 100000));
+  }
+
+  async getData() {
+    const covidResponse = await localStorage.getItem('covidDataStorage'),
+      populationResponse = await localStorage.getItem('countryPopulation');
+
+    const populationObj = {};
+    await JSON.parse(populationResponse).forEach((item) => {
+      populationObj[item.alpha2Code] = item.population;
+    });
+
+    this.data = await JSON.parse(covidResponse);
+    this.data.Countries.forEach((item) => {
+      const population = populationObj[item.CountryCode];
+      item.Population = population;
+      item.NewConfirmedPer100k = this.calculatePer100k(population, item.NewConfirmed);
+      item.NewDeathsPer100k = this.calculatePer100k(population, item.NewDeaths);
+      item.NewRecoveredPer100k = this.calculatePer100k(population, item.NewRecovered);
+      item.TotalConfirmedPer100k = this.calculatePer100k(population, item.TotalConfirmed);
+      item.TotalDeathsPer100k = this.calculatePer100k(population, item.TotalDeaths);
+      item.TotalRecoveredPer100k = this.calculatePer100k(population, item.TotalRecovered);
+    });
+    this.data.Global.NewDeathsPer100k = this.calculateGlobalPer100k(this.data.Global.NewDeaths);
+    this.data.Global.NewRecoveredPer100k = this.calculateGlobalPer100k(this.data.Global.NewRecovered);
+    this.data.Global.NewConfirmedPer100k = this.calculateGlobalPer100k(this.data.Global.NewConfirmed);
+    this.data.Global.TotalConfirmedPer100k = this.calculateGlobalPer100k(this.data.Global.TotalConfirmed);
+    this.data.Global.TotalDeathsPer100k = this.calculateGlobalPer100k(this.data.Global.TotalDeaths);
+    this.data.Global.TotalRecoveredPer100k = this.calculateGlobalPer100k(this.data.Global.TotalRecovered);
+
     console.log(this.data);
   }
 
@@ -44,12 +71,18 @@ export default class Tables {
     };
 
     select.append(
-      createOption('TotalConfirmed', 'Total Confirmed'),
+      createOption('TotalConfirmed', 'Total Cases'),
       createOption('TotalDeaths', 'Total Deaths'),
       createOption('TotalRecovered', 'Total Recovered'),
-      createOption('NewConfirmed', 'New Confirmed'),
-      createOption('NewDeaths', 'New Deaths'),
-      createOption('NewRecovered', 'New Recovered'),
+      createOption('TotalConfirmedPer100k', 'Total Cases per 100k'),
+      createOption('TotalDeathsPer100k', 'Total Deaths per 100k'),
+      createOption('TotalRecoveredPer100k', 'Total Recovered per 100k'),
+      createOption('NewConfirmed', 'Last Day Cases'),
+      createOption('NewDeaths', 'Last Day Deaths'),
+      createOption('NewRecovered', 'Last Day Recovered'),
+      createOption('NewConfirmedPer100k', 'Last Day Cases per 100k'),
+      createOption('NewDeathsPer100k', 'Last Day Deaths per 100k'),
+      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k')
     );
 
     // Container with cases/deaths/recovered numbers by country
@@ -79,7 +112,6 @@ export default class Tables {
     };
 
     const changeList = (parameter) => {
-      // ПЕРИОДИЧЕСКИ БАГАЕТСЯ
       const dataSorted = this.data.Countries.sort((a, b) => b[parameter] - a[parameter]);
       dataSorted.forEach((item, index) => {
         const casesByCountryItem = document.createElement('div');
@@ -88,7 +120,7 @@ export default class Tables {
           <span>${item[parameter]}</span>
           <span>${item.Country}</span>
         `;
-        casesByCountryItem.addEventListener('click', (event) => {
+        casesByCountryItem.addEventListener('click', () => {
           console.log('clicked!', item[parameter], item.Country);
           this.chosenCountry = index;
           console.log(this.chosenCountry);
@@ -119,37 +151,51 @@ export default class Tables {
 
   renderTable(index) {
     const table = document.querySelector('#table');
-    // const inner = document.createElement('div');
     table.innerHTML = `
       <div class="country-name">${this.data.Countries[index].Country}</div>
       <table>
         <tr>
-          <td>TotalConfirmed</td>
-          <td class="td-confirmed">${this.data.Countries[index].TotalConfirmed}</td>
+          <td></td>
+          <td>Total</td>
+          <td>per 100k</td>
         </tr>
         <tr>
-          <td>TotalDeaths</td>
+          <td>Cases</td>
+          <td class="td-cases">${this.data.Countries[index].TotalConfirmed}</td>
+          <td class="td-cases">${this.data.Countries[index].TotalConfirmedPer100k}</td>
+        </tr>
+        <tr>
+          <td>Deaths</td>
           <td class="td-deaths">${this.data.Countries[index].TotalDeaths}</td>
+          <td class="td-deaths">${this.data.Countries[index].TotalDeathsPer100k}</td>
         </tr>
         <tr>
-          <td>TotalRecovered</td>
+          <td>Recovered</td>
           <td class="td-recovered">${this.data.Countries[index].TotalRecovered}</td>
+          <td class="td-recovered">${this.data.Countries[index].TotalRecoveredPer100k}</td>
         </tr>
         <tr>
-          <td>NewConfirmed</td>
-          <td class="td-confirmed">${this.data.Countries[index].NewConfirmed}</td>
+          <td></td>
+          <td>Last day</td>
+          <td>per 100k</td>
         </tr>
         <tr>
-          <td>NewDeaths</td>
+          <td>Cases</td>
+          <td class="td-cases">${this.data.Countries[index].NewConfirmed}</td>
+          <td class="td-cases">${this.data.Countries[index].NewConfirmedPer100k}</td>
+        </tr>
+        <tr>
+          <td>Deaths</td>
           <td class="td-deaths">${this.data.Countries[index].NewDeaths}</td>
+          <td class="td-deaths">${this.data.Countries[index].NewDeathsPer100k}</td>
         </tr>
         <tr>
-          <td>NewRecovered</td>
+          <td>Recovered</td>
           <td class="td-recovered">${this.data.Countries[index].NewRecovered}</td>
+          <td class="td-recovered">${this.data.Countries[index].NewRecoveredPer100k}</td>
         </tr>
       </table>
     `;
-    // table.append(div);
   }
 
   clearTable() {
