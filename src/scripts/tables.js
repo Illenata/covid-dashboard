@@ -1,3 +1,6 @@
+/* eslint-disable no-shadow */
+/* eslint-disable no-use-before-define */
+/* eslint-disable no-restricted-syntax */
 export default class Tables {
   constructor() {
     this.data = null;
@@ -19,7 +22,7 @@ export default class Tables {
   }
 
   renderList() {
-    const list = document.querySelector('#list');
+    const list = document.querySelector('.list');
 
     // Container with parameter selects and total numbers
     const selectBlock = document.createElement('div');
