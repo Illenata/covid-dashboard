@@ -1,20 +1,25 @@
+/* eslint-disable import/no-named-as-default */
+/* eslint-disable import/no-named-as-default-member */
 import './styles/styles.scss';
 import CheckLocalStorageData from './scripts/checkLocalStorageData';
 import getFlagAPI from './scripts/getFlagAPI';
 import WorldMap from './scripts/world-map';
+import Grid from './scripts/grid';
+import pic from './scripts/schedule';
 import Tables from './scripts/tables';
+import MapElements from './scripts/createMapElements';
 
+const grid = new Grid();
+grid.init();
+const area = document.querySelector('.graph');
+const mapElements = new MapElements();
+mapElements.init();
 const checkLocalStorageData = new CheckLocalStorageData();
 checkLocalStorageData.init();
-
 if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation) {
   const worldMap = new WorldMap(checkLocalStorageData.covidData,
     checkLocalStorageData.population);
-
   worldMap.init();
-
-  const tables = new Tables();
-  tables.init();
 } else {
   Promise.all([
     fetch('https://api.covid19api.com/summary'),
@@ -37,3 +42,7 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
 if (checkLocalStorageData.loadFlag === false) { // эту часть можно переделывать или удалить
   getFlagAPI(); // если модуль getFlagAPI не нужен - можно удалять его
 }
+
+const tables = new Tables();
+tables.init();
+area.append(pic);
