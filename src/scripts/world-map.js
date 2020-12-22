@@ -4,7 +4,13 @@ import countryBorder from './custom.geo.json';
 
 export default class WorldMap {
   constructor(covidData, populationCoordsData) {
-    this.mymap = L.map('mapid').setView([40, 8], 2);
+    this.mymap = L.map('mapid', {
+      zoomSnap: 0.1,
+      worldCopyJump: true,
+      maxBounds: [[-85, -180.0], [85, 180.0]],
+    }).setView([20, -20], 1.6)
+      .setMinZoom(1.5)
+      .setMaxZoom(4);
     this.covidData = covidData;
     this.populationCoordsData = populationCoordsData;
 
@@ -12,12 +18,14 @@ export default class WorldMap {
     this.markersGroup = [];
     this.popapContent = new Map();
     this.wrapper = document.querySelector('.map-wrapper');
+    this.buttonFullScreen = document.querySelector('.center_');
+    this.isFullScreen = false;
   }
 
   init() {
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
+      maxZoom: 4,
       id: 'mapbox/streets-v11',
       tileSize: 512,
       zoomOffset: -1,
@@ -29,10 +37,24 @@ export default class WorldMap {
     this.createMarkers();
     this.createLegend();
     this.customLayersNav();
+
+    this.buttonFullScreen.addEventListener('click', () => {
+      this.isFullScreen = !this.isFullScreen;
+
+      if (this.isFullScreen === true) {
+        this.mymap
+          .invalidateSize()
+          .setView([50, -80], 2);
+      } else {
+        this.mymap
+          .invalidateSize()
+          .setView([20, -20], 1.6);
+      }
+    });
   }
 
   getUnitForRadiusOfMarkerSize() {
-    const maxSize = 50;
+    const maxSize = 40;
     const totalCasesArr = [];
 
     for (let i = 0; i < this.covidData.Countries.length; i += 1) {
@@ -77,9 +99,8 @@ export default class WorldMap {
         const controlLayersElem = document.querySelector('.group-type');
         return controlLayersElem;
       },
-      onRemove() {
-        // Nothing to do here
-      },
+      // onRemove() {
+      // },
     });
     L.control.customControl = function createControl(opts) {
       return new L.Control.CustomControl(opts);
@@ -246,6 +267,6 @@ export default class WorldMap {
       });
     });
 
-    this.mymap.fitBounds(geojson.getBounds());
+    // this.mymap.fitBounds(geojson.getBounds());
   }
 }

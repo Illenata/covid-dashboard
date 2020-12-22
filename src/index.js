@@ -8,6 +8,7 @@ import Grid from './scripts/grid';
 import pic from './scripts/schedule';
 import Tables from './scripts/tables';
 import MapElements from './scripts/createMapElements';
+import Search from './scripts/searchForList';
 
 const grid = new Grid();
 grid.init();
@@ -46,4 +47,6 @@ if (checkLocalStorageData.loadFlag === false) { // эту часть можно 
 
 const tables = new Tables();
 tables.init();
+const searchForList = new Search();
+searchForList.init();
 area.append(pic);

@@ -40,6 +40,18 @@
     height: 87vh;
     top: 40px;
     z-index: 10000;
+
+    .map-wrapper {
+      width: 70%;
+      height: 93%;
+      margin: 0 auto;
+      .control-layers {
+        margin-top: 0;
+      }
+      .group-value, .group-time {
+        flex-direction: row;
+      }      
+    }
   }
 
   .left{
