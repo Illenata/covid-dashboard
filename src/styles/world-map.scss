@@ -1,7 +1,6 @@
 #mapid {
-  width: 65rem;
-  height: 45rem;
-  margin-top: 5rem;
+  width: 100%;
+  height: 100%;
 }
 
 .leaflet-container {
@@ -47,6 +46,7 @@
 }
 
 .control-layers {
+  margin-top: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -98,15 +98,20 @@
 	user-select: none;
 	cursor: pointer;
 }
- 
+
 .control-layers input[type=radio]:checked + label {
 	background: #350042;
 }
- 
+
 .control-layers label:hover {
   text-shadow: 0 0 .3rem #fff;
 }
 
 .leaflet-interactive {
   transition: all .3s;
+}
+.map-wrapper{
+  margin-top: 1vh;
+  height: 70vh;
+  padding: 10px;
 }

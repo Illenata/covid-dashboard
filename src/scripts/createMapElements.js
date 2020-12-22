@@ -4,7 +4,7 @@ export default class MapElements {
   }
 
   init() {
-    const wrapper = this.createElement('div', 'map-wrapper', document.body);
+    const wrapper = this.createElement('div', 'map-wrapper', document.querySelector('.center'));
     this.createElement('div', 'world-map', wrapper, 'mapid');
     const radioButtons = this.createElement('form', 'control-layers', wrapper);
     const groupValue = this.createElement('div', 'group-value', radioButtons);
