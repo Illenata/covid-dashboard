@@ -26,8 +26,6 @@
     display: flex;
     height: 87vh;
     flex-grow: 3;
-    flex-direction: column;
-    align-content: center;
     border: 3px solid rgba(29, 21, 21, 0.719);
     background-color:rgba(41, 38, 38, 1);
     order: 1;
@@ -40,6 +38,19 @@
     height: 87vh;
     top: 40px;
     z-index: 10000;
+
+    .map-wrapper{
+      margin: 0 auto;
+      height: 86%;
+      padding: 0;
+    }
+    .control-layers {
+      margin-top: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: .5rem;
+    }
   }
 
   .left{
@@ -69,7 +80,6 @@
 
   .right{
     box-sizing: border-box;
-    position: relative;
     margin-top: 40px;
     display: flex;
     height: 87vh;
@@ -82,21 +92,25 @@
     order: 2;
     transition: ease 1s;
   }
-  .right_full{
+  .table{
+    width: 100%;
+    height: 50%;
+  }
+  .graph{
+    position: relative;
+    margin: 0 auto;
+    display: flex;
+    width: 35vw;
+    background-color: burlywood;
+  }
+  .graph.graph_full{
     position: absolute;
     margin: 0;
-    top: 40px;
-    width: 100%;
+    top: 0;
+    right: 0;
+    width: 100vw;
     height: 87vh;
     z-index: 10000;
-
-    .graph{
-      margin: 0 auto;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 50%;
-    }
   }
 
   .button{
@@ -119,15 +133,6 @@
   }
   .show{
   visibility:visible;
-  }
-  .table{
-    width: 100%;
-    height: 50%;
-  }
-  .graph{
-    margin: 0 auto;
-    display: flex;
-    width: 27vw;
   }
 
   @media screen and (max-width: 1023px) {

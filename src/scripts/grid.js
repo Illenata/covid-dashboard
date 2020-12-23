@@ -28,7 +28,7 @@ export default class Grid {
       }
       if (i === 4) {
         this.createSections('right', `${this.table}`, `${this.graph}`);
-        this.addEvent('right');
+        this.addEvent(`${this.graph}`);
       }
     }
   }
@@ -57,19 +57,22 @@ export default class Grid {
       first.classList.add(`${firstElement}`);
       second.classList.add(`${secondElement}`);
       this.section.append(first, second);
+      this.addBtns(`${secondElement}`);
     } else if (firstElement) {
       first.id = `${firstElement}`;
       first.classList.add(`${firstElement}`);
       this.section.append(first);
     }
-    this.addBtns(`${name}`);
+    if (!secondElement) {
+      this.addBtns(`${name}`);
+    }
   }
 
   addBtns(x) {
     const btn = document.createElement('button');
     btn.classList.add('button', `${x}_`);
     btn.style.background = `no-repeat url(${img})`;
-    this.section.append(btn);
+    document.querySelector(`.${x}`).append(btn);
     btn.addEventListener('click', () => {
       this.makeOnfullscreen(x);
     });
