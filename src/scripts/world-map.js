@@ -14,6 +14,20 @@ export default class WorldMap {
     this.covidData = covidData;
     this.populationCoordsData = populationCoordsData;
 
+    this.typeData = document.querySelector('.map-data-type');
+
+    this.myCustomStyle = {
+      stroke: true,
+      fill: true,
+      color: '#555',
+      fillColor: '#fff',
+      fillOpacity: 1,
+    };
+
+    this.geojson = L.geoJson(countryBorder, {
+      style: this.myCustomStyle,
+    }).addTo(this.mymap);
+
     this.unitMarkerSize = 0;
     this.markersGroup = [];
     this.popapContent = new Map();
@@ -99,8 +113,6 @@ export default class WorldMap {
         const controlLayersElem = document.querySelector('.group-type');
         return controlLayersElem;
       },
-      // onRemove() {
-      // },
     });
     L.control.customControl = function createControl(opts) {
       return new L.Control.CustomControl(opts);
@@ -112,7 +124,8 @@ export default class WorldMap {
     for (let i = 0; i < this.covidData.Countries.length; i += 1) {
       for (let j = 0; j < this.populationCoordsData.length; j += 1) {
         if (this.covidData.Countries[i].CountryCode === this.populationCoordsData[j].alpha2Code) {
-          this.addMarkers('red', this.covidData.Countries[i].TotalConfirmed, 'Cases', i, j);
+          this.addMarkers('red', this.covidData.Countries[i].TotalConfirmed, 'Total Cases', i, j);
+          this.typeData.textContent = 'Total Cases';
 
           const people = this.populationCoordsData[j].population;
           const absoluteElem = document.querySelector('.value-absolute');
@@ -150,36 +163,48 @@ export default class WorldMap {
             <br>${name}: ${data}`);
           };
 
-          this.wrapper.addEventListener('click', () => {
+          document.body.addEventListener('click', () => {
             if (casesElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
-                changeMarker(totalCases, 'Cases', 'red');
+                changeMarker(totalCases, 'Total Cases', 'red');
+                this.typeData.textContent = 'Total Cases';
               } else if (absoluteElem.checked && lastDayElem.checked) {
-                changeMarker(dailyCases, 'Daily cases', 'red');
+                changeMarker(dailyCases, 'Last Day Cases', 'red');
+                this.typeData.textContent = 'Last Day Cases';
               } else if (coefElem.checked && allTimeElem.checked) {
-                changeMarker(calculateRer100k(totalCases), 'Cases per 100k', 'red');
+                changeMarker(calculateRer100k(totalCases), 'Total Cases per 100k', 'red');
+                this.typeData.textContent = 'Total Cases per 100k';
               } else {
-                changeMarker(calculateRer100k(dailyCases), 'Daily cases per 100k', 'red');
+                changeMarker(calculateRer100k(dailyCases), 'Last Day Cases per 100k', 'red');
+                this.typeData.textContent = 'Last Day Cases per 100k';
               }
             } if (recoveredElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
-                changeMarker(totalRecovered, 'Recovered', 'green');
+                changeMarker(totalRecovered, 'Total Recovered', 'green');
+                this.typeData.textContent = 'Total Recovered';
               } else if (absoluteElem.checked && lastDayElem.checked) {
-                changeMarker(dailyRecovered, 'Daily recovered', 'green');
+                changeMarker(dailyRecovered, 'Last Day Recovered', 'green');
+                this.typeData.textContent = 'Last Day Recovered';
               } else if (coefElem.checked && allTimeElem.checked) {
-                changeMarker(calculateRer100k(totalRecovered), 'Recovered per 100k', 'green');
+                changeMarker(calculateRer100k(totalRecovered), 'Total Recovered per 100k', 'green');
+                this.typeData.textContent = 'Total Recovered per 100k';
               } else {
-                changeMarker(calculateRer100k(dailyRecovered), 'Daily recovered per 100k', 'green');
+                changeMarker(calculateRer100k(dailyRecovered), 'Last Day Recovered per 100k', 'green');
+                this.typeData.textContent = 'Last Day Recovered per 100k';
               }
             } if (deathsElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
-                changeMarker(totalDeaths, 'Deaths', 'black');
+                changeMarker(totalDeaths, 'Total Deaths', 'black');
+                this.typeData.textContent = 'Total Deaths';
               } else if (absoluteElem.checked && lastDayElem.checked) {
-                changeMarker(dailyDeaths, 'Daily deaths', 'black');
+                changeMarker(dailyDeaths, 'Last Day Deaths', 'black');
+                this.typeData.textContent = 'Last Day Deaths';
               } else if (coefElem.checked && allTimeElem.checked) {
-                changeMarker(calculateRer100k(totalDeaths), 'Deaths per 100k', 'black');
+                changeMarker(calculateRer100k(totalDeaths), 'Total Deaths per 100k', 'black');
+                this.typeData.textContent = 'Total Deaths per 100k';
               } else {
-                changeMarker(calculateRer100k(dailyDeaths), 'Daily deaths per 100k', 'black');
+                changeMarker(calculateRer100k(dailyDeaths), 'Last Day Deaths per 100k', 'black');
+                this.typeData.textContent = 'Last Day Deaths per 100k';
               }
             }
           });
@@ -229,21 +254,7 @@ export default class WorldMap {
       pane: 'labels',
     }).addTo(this.mymap);
 
-    const myCustomStyle = {
-      stroke: true,
-      fill: true,
-      color: '#555',
-      fillColor: '#fff',
-      fillOpacity: 1,
-    };
-
-    const geojson = L.geoJson(countryBorder, {
-      style: myCustomStyle,
-    }).addTo(this.mymap);
-
-    geojson.id = 'countries';
-
-    geojson.eachLayer((layer) => {
+    this.geojson.eachLayer((layer) => {
       layer.on('mouseover', () => {
         this.covidData.Countries.forEach((countryCovid) => {
           this.populationCoordsData.forEach((country) => {
@@ -263,10 +274,8 @@ export default class WorldMap {
       });
       layer.on('mouseout', () => {
         layer.closePopup();
-        geojson.resetStyle(layer);
+        this.geojson.resetStyle(layer);
       });
     });
-
-    // this.mymap.fitBounds(geojson.getBounds());
   }
 }
