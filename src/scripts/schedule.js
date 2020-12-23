@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 /* eslint-disable no-nested-ternary */
 /* eslint-disable object-shorthand */
 import Chart from 'chart.js';
@@ -10,37 +11,41 @@ export default class Shedule {
         labels: y,
         datasets: [{
           minBarLength: 2,
-          pointRadius: 3,
+          pointRadius: 1,
+          showLine: true,
           label: '# Cases ',
           data: x,
-          borderWidth: 1,
+          borderWidth: 3,
           backgroundColor: function () {
-            return 'red';
+            return 'rgba(255, 0, 0, 0.3)';
           },
-          fill: false,
+          fill: 1,
+          borderColor: 'rgba(255, 0, 0, 0.3)',
         },
         {
           minBarLength: 2,
-          pointRadius: 3,
+          pointRadius: 1,
+          showLine: true,
           label: '# recovered ',
           data: a,
-          borderWidth: 1,
+          borderWidth: 3,
           backgroundColor: function () {
-            return 'green';
+            return 'rgba(0, 255, 0, 0.3)';
           },
-          fill: false,
-
+          fill: 2,
+          borderColor: 'rgba(0, 255, 0, 0.3)',
         },
         {
           minBarLength: 2,
-          pointRadius: 3,
+          pointRadius: 1,
           label: '# deaths ',
           data: b,
-          borderWidth: 1,
+          borderWidth: 3,
           backgroundColor: function () {
-            return 'black';
+            return 'rgba(0, 0, 0, 1)';
           },
-          fill: false,
+          fill: 'origin',
+          borderColor: 'rgba(0, 0, 0, 1)',
         }],
       },
       options: {
