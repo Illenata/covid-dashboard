@@ -1,6 +1,7 @@
 /* eslint-disable no-shadow */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-restricted-syntax */
+import Search from './searchForList';
 export default class Tables {
   constructor() {
     this.data = null;
@@ -10,7 +11,10 @@ export default class Tables {
   async init() {
     this.getData().then(() => {
       this.renderList();
-      this.renderTable(0);
+      this.renderTable(0).then(() => {
+        const searchForList = new Search();
+        searchForList.init();
+      });
     });
   }
 
@@ -23,7 +27,13 @@ export default class Tables {
 
   async getData() {
     const covidResponse = await localStorage.getItem('covidDataStorage'),
-      populationResponse = await localStorage.getItem('countryPopulation');
+      populationResponse = await localStorage.getItem('countryPopulation'),
+      flagResponse = await localStorage.getItem('countryPopulationFlag');
+
+    const flagObj = {};
+    await JSON.parse(flagResponse).forEach((item) => {
+      flagObj[item.alpha2Code] = item.flag;
+    });
 
     const populationObj = {};
     await JSON.parse(populationResponse).forEach((item) => {
@@ -40,6 +50,7 @@ export default class Tables {
       item.TotalConfirmedPer100k = this.calculatePer100k(population, item.TotalConfirmed);
       item.TotalDeathsPer100k = this.calculatePer100k(population, item.TotalDeaths);
       item.TotalRecoveredPer100k = this.calculatePer100k(population, item.TotalRecovered);
+      item.Flag = flagObj[item.CountryCode];
     });
     this.data.Global.NewDeathsPer100k = this.calculateGlobalPer100k(this.data.Global.NewDeaths);
     this.data.Global.NewRecoveredPer100k = this.calculateGlobalPer100k(this.data.Global.NewRecovered);
@@ -65,34 +76,36 @@ export default class Tables {
     totalNumber.classList.add('total-number');
     totalNumber.innerText = this.data.Global.TotalConfirmed;
 
-    const createOption = (val, inner) => {
+    const createOption = (val, inner, color = '') => {
       const option = document.createElement('option');
       option.value = val;
       option.innerText = inner;
+      option.dataset.color = color;
       return option;
     };
 
     select.append(
-      createOption('TotalConfirmed', 'Total Cases'),
+      createOption('TotalConfirmed', 'Total Cases', 'cases'),
       createOption('TotalDeaths', 'Total Deaths'),
-      createOption('TotalRecovered', 'Total Recovered'),
-      createOption('TotalConfirmedPer100k', 'Total Cases per 100k'),
+      createOption('TotalRecovered', 'Total Recovered', 'recovered'),
+      createOption('TotalConfirmedPer100k', 'Total Cases per 100k', 'cases'),
       createOption('TotalDeathsPer100k', 'Total Deaths per 100k'),
-      createOption('TotalRecoveredPer100k', 'Total Recovered per 100k'),
-      createOption('NewConfirmed', 'Last Day Cases'),
+      createOption('TotalRecoveredPer100k', 'Total Recovered per 100k', 'recovered'),
+      createOption('NewConfirmed', 'Last Day Cases', 'cases'),
       createOption('NewDeaths', 'Last Day Deaths'),
-      createOption('NewRecovered', 'Last Day Recovered'),
-      createOption('NewConfirmedPer100k', 'Last Day Cases per 100k'),
+      createOption('NewRecovered', 'Last Day Recovered', 'recovered'),
+      createOption('NewConfirmedPer100k', 'Last Day Cases per 100k', 'cases'),
       createOption('NewDeathsPer100k', 'Last Day Deaths per 100k'),
-      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k')
+      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k', 'recovered')
     );
 
     // Container with cases/deaths/recovered numbers by country
-    const casesByCountry = document.createElement('div');
-    casesByCountry.innerHTML = `
-      <h1>Cases by country</h1>
-    `;
+    const casesByCountry = document.createElement('div'),
+      casesByCountryHeader = document.createElement('div');
+
     casesByCountry.classList.add('cases-by-country');
+    casesByCountryHeader.innerHTML = `<h1>Cases by country</h1>`;
+    casesByCountryHeader.classList.add('cases-by-country__header');
 
     const casesByCountryList = document.createElement('div');
     casesByCountryList.classList.add('cases-by-country__list');
@@ -113,31 +126,35 @@ export default class Tables {
       });
     };
 
-    const changeList = (parameter) => {
+    const changeList = (parameter, color) => {
       const dataSorted = this.data.Countries.sort((a, b) => b[parameter] - a[parameter]);
       dataSorted.forEach((item, index) => {
         const casesByCountryItem = document.createElement('div');
         casesByCountryItem.classList.add('cases-by-country__item');
         casesByCountryItem.innerHTML = `
           <span>${item[parameter]}</span>
+          <span>
+            <img src="${item.Flag}" alt="${item.Country}">
+          </span>
           <span>${item.Country}</span>
         `;
         casesByCountryItem.addEventListener('click', () => {
           console.log('clicked!', item[parameter], item.Country);
           this.chosenCountry = index;
           console.log(this.chosenCountry);
+          console.log(item);
           this.clearTable();
           this.renderTable(index);
         });
         casesByCountryList.append(casesByCountryItem);
       });
 
-      casesByCountry.append(casesByCountryList);
+      casesByCountry.append(casesByCountryHeader, casesByCountryList);
     };
 
     select.addEventListener('change', (event) => {
       clearList();
-      changeList(event.target.value);
+      changeList(event.target.value, event.target.dataset.color);
       totalNumber = document.querySelector('.total-number');
       totalNumber.innerText = this.data.Global[event.target.value];
       this.clearTable();
@@ -151,10 +168,15 @@ export default class Tables {
     changeList('TotalConfirmed');
   }
 
-  renderTable(index) {
+  async renderTable(index) {
     const table = document.querySelector('#table');
     table.innerHTML = `
-      <div class="country-name">${this.data.Countries[index].Country}</div>
+      <div class="country-name">
+        <span>
+          <img src="${this.data.Countries[index].Flag}" alt="${this.data.Countries[index].Country}">
+        </span>
+        <span>${this.data.Countries[index].Country}</span>
+      </div>
       <table>
         <tr>
           <td></td>
