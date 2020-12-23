@@ -1,14 +1,14 @@
 export default class Search {
   constructor() {
-    this.list = document.querySelector('.list');
+    this.appendingPlace = null;
   }
 
-  init() {
+  async init() {
+    this.appendingPlace = await document.querySelector('.cases-by-country__header');
     const input = document.createElement('input');
     input.type = 'text';
-    input.classList.add('input-search');
     input.placeholder = 'Search';
-    this.list.prepend(input);
+    this.appendingPlace.append(input);
 
     input.oninput = function () {
       const content = document.querySelectorAll('.cases-by-country__item');
@@ -27,9 +27,4 @@ export default class Search {
       }
     };
   }
-
-  // startSearch() {
-  //   const
-  //   document.querySelector('.input-search')
-  // }
 }

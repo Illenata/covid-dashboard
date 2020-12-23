@@ -6,7 +6,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  outline: 2px solid silver;
 
 
   .select-block,
@@ -20,11 +19,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    height: 80px;
-    outline: 1px solid gray;
+    height: 12vh;
+    border: 1px solid #1d1515b7;
 
     select {
-      width: 60%;
+      width: 90%;
+      color: #9aa9b8;
+      background:#3b3939;
+      border: 1px solid #1d1515b7;
     }
 
     .total-number {
@@ -35,38 +37,110 @@
   }
 
   .cases-by-country {
-    outline: 1px solid gray;
+    border: 1px solid #1d1515b7;
+
+    .cases-by-country__header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      height: 70px;
+      h1 {
+        font-size: 1.5em;
+      }
+      input {
+        width: 90%;
+        padding: 0 16px;
+        color: #9aa9b8;
+        background:#3b3939;
+        border: 1px solid #1d1515b7;
+      }
+    }
 
     .cases-by-country__list {
-      height: 450px;
+      height: 50vh;
       overflow-x: auto;
     }
-
-    h1 {
-      text-align: center;
-      font-size: 1.5em;
-      line-height: 2em;
+    .cases-by-country__list::-webkit-scrollbar {
+      width: 8px;
+      background-color: #3b3939;
+      border-radius: 1rem;
     }
-
-    div {
-      border-bottom: 1px solid rgb(223, 223, 223);
+    .cases-by-country__list::-webkit-scrollbar-thumb {
+        background-color: #4e4d4d;
+        border-radius: 1rem;
+    }
+    .cases-by-country__item {
+      border-bottom: 1px solid #4e4d4d;
       padding: 3px;
 
       span:first-child {
-        margin-right: 20px;
         font-weight: bold;
-        color: red;
       }
+
+      span {
+        img {
+          height: 0.9em;
+          margin: 0 8px;
+        }
+      }
+    }
+    .cases-by-country__item:last-child {
+      border: none;
     }
   }
 
   .update-date {
+    padding: 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    border: 1px solid #1d1515b7;
+  }
+}
 
-    outline: 1px solid gray;
+.table {
+  width: 100%;
+  padding: 8px;
+  .country-name {
+    width: 100%;
+    padding: 8px;
+    span {
+      font-size: 1.5em;
+      font-weight: bold;
+      img {
+        height: 0.9em;
+        margin-right: 16px;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    border-spacing: 0;
+    border: 1px solid #1d1515b7;
+    tr {
+      td {
+        padding: 4px;
+        border-top: 1px solid #1d1515b7;
+      }
+      .td-cases {
+        color: red;
+        font-weight: bold;
+      }
+      .td-deaths {
+        font-weight: bold;
+      }
+      .td-recovered {
+        color: green;
+        font-weight: bold;
+      }
+    }
+    tr:first-child {
+      td {
+        border-top: none;
+      }
+    }
   }
 }
 

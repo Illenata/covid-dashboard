@@ -47,6 +47,4 @@ if (checkLocalStorageData.loadFlag === false) { // эту часть можно 
 
 const tables = new Tables();
 tables.init();
-const searchForList = new Search();
-searchForList.init();
 area.append(pic);

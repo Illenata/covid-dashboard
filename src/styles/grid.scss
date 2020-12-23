@@ -86,8 +86,9 @@
     display: flex;
     height: 87vh;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-content: center;
+    align-items: center;
     flex-grow: 1;
     border: 3px solid rgba(29, 21, 21, 0.719);
     background-color:rgba(41, 38, 38, 1);
