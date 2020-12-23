@@ -1,9 +1,6 @@
-/* eslint-disable */
-/* eslint-disable no-shadow */
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-restricted-syntax */
 import Search from './searchForList';
 import Observable from './observer';
+
 export default class Tables {
   constructor() {
     this.data = null;
@@ -20,17 +17,10 @@ export default class Tables {
     });
   }
 
-  calculatePer100k(population, casesValue) {
-    return Math.ceil(casesValue / (population / 100000));
-  }
-  calculateGlobalPer100k(casesValue) {
-    return Math.ceil(casesValue / (7594000000 / 100000));
-  }
-
   async getData() {
-    const covidResponse = await localStorage.getItem('covidDataStorage'),
-      populationResponse = await localStorage.getItem('countryPopulation'),
-      flagResponse = await localStorage.getItem('countryPopulationFlag');
+    const covidResponse = await localStorage.getItem('covidDataStorage');
+    const populationResponse = await localStorage.getItem('countryPopulation');
+    const flagResponse = await localStorage.getItem('countryPopulationFlag');
 
     const flagObj = {};
     await JSON.parse(flagResponse).forEach((item) => {
@@ -42,26 +32,34 @@ export default class Tables {
       populationObj[item.alpha2Code] = item.population;
     });
 
+    function calculatePer100k(population, casesValue) {
+      return Math.ceil(casesValue / (population / 100000));
+    }
+
+    function calculateGlobalPer100k(casesValue) {
+      return Math.ceil(casesValue / (7594000000 / 100000));
+    }
+
     this.data = await JSON.parse(covidResponse);
     this.data.Countries.forEach((item) => {
+      /* eslint-disable no-param-reassign */
       const population = populationObj[item.CountryCode];
       item.Population = population;
-      item.NewConfirmedPer100k = this.calculatePer100k(population, item.NewConfirmed);
-      item.NewDeathsPer100k = this.calculatePer100k(population, item.NewDeaths);
-      item.NewRecoveredPer100k = this.calculatePer100k(population, item.NewRecovered);
-      item.TotalConfirmedPer100k = this.calculatePer100k(population, item.TotalConfirmed);
-      item.TotalDeathsPer100k = this.calculatePer100k(population, item.TotalDeaths);
-      item.TotalRecoveredPer100k = this.calculatePer100k(population, item.TotalRecovered);
+      item.NewConfirmedPer100k = calculatePer100k(population, item.NewConfirmed);
+      item.NewDeathsPer100k = calculatePer100k(population, item.NewDeaths);
+      item.NewRecoveredPer100k = calculatePer100k(population, item.NewRecovered);
+      item.TotalConfirmedPer100k = calculatePer100k(population, item.TotalConfirmed);
+      item.TotalDeathsPer100k = calculatePer100k(population, item.TotalDeaths);
+      item.TotalRecoveredPer100k = calculatePer100k(population, item.TotalRecovered);
       item.Flag = flagObj[item.CountryCode];
     });
-    this.data.Global.NewDeathsPer100k = this.calculateGlobalPer100k(this.data.Global.NewDeaths);
-    this.data.Global.NewRecoveredPer100k = this.calculateGlobalPer100k(this.data.Global.NewRecovered);
-    this.data.Global.NewConfirmedPer100k = this.calculateGlobalPer100k(this.data.Global.NewConfirmed);
-    this.data.Global.TotalConfirmedPer100k = this.calculateGlobalPer100k(this.data.Global.TotalConfirmed);
-    this.data.Global.TotalDeathsPer100k = this.calculateGlobalPer100k(this.data.Global.TotalDeaths);
-    this.data.Global.TotalRecoveredPer100k = this.calculateGlobalPer100k(this.data.Global.TotalRecovered);
-
-    console.log(this.data);
+    const info = this.data;
+    info.Global.NewDeathsPer100k = calculateGlobalPer100k(info.Global.NewDeaths);
+    info.Global.NewRecoveredPer100k = calculateGlobalPer100k(info.Global.NewRecovered);
+    info.Global.NewConfirmedPer100k = calculateGlobalPer100k(info.Global.NewConfirmed);
+    info.Global.TotalConfirmedPer100k = calculateGlobalPer100k(info.Global.TotalConfirmed);
+    info.Global.TotalDeathsPer100k = calculateGlobalPer100k(info.Global.TotalDeaths);
+    info.Global.TotalRecoveredPer100k = calculateGlobalPer100k(info.Global.TotalRecovered);
   }
 
   renderList() {
@@ -74,39 +72,44 @@ export default class Tables {
     const select = document.createElement('select');
     select.classList.add('select');
 
-    let totalNumber = document.createElement('p');
+    let totalNumber = document.createElement('div');
     totalNumber.classList.add('total-number');
-    totalNumber.innerText = this.data.Global.TotalConfirmed;
+    totalNumber.innerHTML = `
+      <p class="color-cases">
+        ${this.data.Global.TotalConfirmed}
+      </p>
+    `;
 
-    const createOption = (val, inner, color = '') => {
+    const createOption = (val, inner) => {
       const option = document.createElement('option');
       option.value = val;
       option.innerText = inner;
-      option.dataset.color = color;
       return option;
     };
 
     select.append(
-      createOption('TotalConfirmed', 'Total Cases', 'cases'),
+      createOption('TotalConfirmed', 'Total Cases'),
       createOption('TotalDeaths', 'Total Deaths'),
-      createOption('TotalRecovered', 'Total Recovered', 'recovered'),
-      createOption('TotalConfirmedPer100k', 'Total Cases per 100k', 'cases'),
+      createOption('TotalRecovered', 'Total Recovered'),
+      createOption('TotalConfirmedPer100k', 'Total Cases per 100k'),
       createOption('TotalDeathsPer100k', 'Total Deaths per 100k'),
-      createOption('TotalRecoveredPer100k', 'Total Recovered per 100k', 'recovered'),
-      createOption('NewConfirmed', 'Last Day Cases', 'cases'),
+      createOption('TotalRecoveredPer100k', 'Total Recovered per 100k'),
+      createOption('NewConfirmed', 'Last Day Cases'),
       createOption('NewDeaths', 'Last Day Deaths'),
-      createOption('NewRecovered', 'Last Day Recovered', 'recovered'),
-      createOption('NewConfirmedPer100k', 'Last Day Cases per 100k', 'cases'),
+      createOption('NewRecovered', 'Last Day Recovered'),
+      createOption('NewConfirmedPer100k', 'Last Day Cases per 100k'),
       createOption('NewDeathsPer100k', 'Last Day Deaths per 100k'),
-      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k', 'recovered')
+      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k'),
     );
 
     // Container with cases/deaths/recovered numbers by country
-    const casesByCountry = document.createElement('div'),
-      casesByCountryHeader = document.createElement('div');
+    const casesByCountry = document.createElement('div');
+    const casesByCountryHeader = document.createElement('div');
 
     casesByCountry.classList.add('cases-by-country');
-    casesByCountryHeader.innerHTML = `<h1>Cases by country</h1>`;
+    casesByCountryHeader.innerHTML = `
+      <h1>Cases by country</h1>
+    `;
     casesByCountryHeader.classList.add('cases-by-country__header');
 
     const casesByCountryList = document.createElement('div');
@@ -128,24 +131,33 @@ export default class Tables {
       });
     };
 
-    const changeList = (parameter, color) => {
+    const clearTable = () => {
+      const table = document.querySelector('#table');
+      table.innerHTML = '';
+    };
+
+    const defineColor = (str) => {
+      if (str.toLowerCase().includes('confirmed')) { return 'color-cases'; }
+      if (str.toLowerCase().includes('deaths')) { return 'color-deaths'; }
+      if (str.toLowerCase().includes('recovered')) { return 'color-recovered'; }
+      return '';
+    };
+
+    const changeList = (parameter) => {
       const dataSorted = this.data.Countries.sort((a, b) => b[parameter] - a[parameter]);
       dataSorted.forEach((item, index) => {
         const casesByCountryItem = document.createElement('div');
         casesByCountryItem.classList.add('cases-by-country__item');
         casesByCountryItem.innerHTML = `
-          <span>${item[parameter]}</span>
+          <span class="${defineColor(parameter)}">${item[parameter]}</span>
           <span>
             <img src="${item.Flag}" alt="${item.Country}">
           </span>
           <span>${item.Country}</span>
         `;
         casesByCountryItem.addEventListener('click', () => {
-          console.log('clicked!', item[parameter], item.Country);
           this.chosenCountry = index;
-          console.log(this.chosenCountry);
-          console.log(item);
-          this.clearTable();
+          clearTable();
           this.renderTable(index);
         });
         casesByCountryList.append(casesByCountryItem);
@@ -156,10 +168,14 @@ export default class Tables {
 
     select.addEventListener('change', (event) => {
       clearList();
-      changeList(event.target.value, event.target.dataset.color);
+      changeList(event.target.value);
       totalNumber = document.querySelector('.total-number');
-      totalNumber.innerText = this.data.Global[event.target.value];
-      this.clearTable();
+      totalNumber.innerHTML = `
+        <p class="${defineColor(event.target.value)}">
+          ${this.data.Global[event.target.value]}
+        </p>
+      `;
+      clearTable();
       this.renderTable(0);
       switch (event.target.value) {
         case 'TotalConfirmed':
@@ -197,7 +213,7 @@ export default class Tables {
           break;
         default:
           Observable.notify('recovered', 'coef', 'lastDay');
-      };
+      }
     });
 
     selectBlock.append(select, totalNumber);
@@ -224,18 +240,18 @@ export default class Tables {
         </tr>
         <tr>
           <td>Cases</td>
-          <td class="td-cases">${this.data.Countries[index].TotalConfirmed}</td>
-          <td class="td-cases">${this.data.Countries[index].TotalConfirmedPer100k}</td>
+          <td class="color-cases bold">${this.data.Countries[index].TotalConfirmed}</td>
+          <td class="color-cases bold">${this.data.Countries[index].TotalConfirmedPer100k}</td>
         </tr>
         <tr>
           <td>Deaths</td>
-          <td class="td-deaths">${this.data.Countries[index].TotalDeaths}</td>
-          <td class="td-deaths">${this.data.Countries[index].TotalDeathsPer100k}</td>
+          <td class="color-deaths bold">${this.data.Countries[index].TotalDeaths}</td>
+          <td class="color-deaths bold">${this.data.Countries[index].TotalDeathsPer100k}</td>
         </tr>
         <tr>
           <td>Recovered</td>
-          <td class="td-recovered">${this.data.Countries[index].TotalRecovered}</td>
-          <td class="td-recovered">${this.data.Countries[index].TotalRecoveredPer100k}</td>
+          <td class="color-recovered bold">${this.data.Countries[index].TotalRecovered}</td>
+          <td class="color-recovered bold">${this.data.Countries[index].TotalRecoveredPer100k}</td>
         </tr>
         <tr>
           <td></td>
@@ -244,25 +260,20 @@ export default class Tables {
         </tr>
         <tr>
           <td>Cases</td>
-          <td class="td-cases">${this.data.Countries[index].NewConfirmed}</td>
-          <td class="td-cases">${this.data.Countries[index].NewConfirmedPer100k}</td>
+          <td class="color-cases bold">${this.data.Countries[index].NewConfirmed}</td>
+          <td class="color-cases bold">${this.data.Countries[index].NewConfirmedPer100k}</td>
         </tr>
         <tr>
           <td>Deaths</td>
-          <td class="td-deaths">${this.data.Countries[index].NewDeaths}</td>
-          <td class="td-deaths">${this.data.Countries[index].NewDeathsPer100k}</td>
+          <td class="color-deaths bold">${this.data.Countries[index].NewDeaths}</td>
+          <td class="color-deaths bold">${this.data.Countries[index].NewDeathsPer100k}</td>
         </tr>
         <tr>
           <td>Recovered</td>
-          <td class="td-recovered">${this.data.Countries[index].NewRecovered}</td>
-          <td class="td-recovered">${this.data.Countries[index].NewRecoveredPer100k}</td>
+          <td class="color-recovered bold">${this.data.Countries[index].NewRecovered}</td>
+          <td class="color-recovered bold">${this.data.Countries[index].NewRecoveredPer100k}</td>
         </tr>
       </table>
     `;
-  }
-
-  clearTable() {
-    const table = document.querySelector('#table');
-    table.innerHTML = ``;
   }
 }

@@ -4,7 +4,7 @@ export default class ckeckLocalStorageData {
     this.loadFlag = false;
     this.loadPopulation = false;
     this.covidData = JSON.parse(localStorage.getItem('covidDataStorage'));
-    this.flag = JSON.parse(localStorage.getItem('countryFlag'));
+    this.flag = JSON.parse(localStorage.getItem('countryPopulationFlag'));
     this.population = JSON.parse(localStorage.getItem('countryPopulation'));
   }
 
