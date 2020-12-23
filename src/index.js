@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable import/no-named-as-default */
 /* eslint-disable import/no-named-as-default-member */
 import './styles/styles.scss';
@@ -21,6 +22,7 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
     checkLocalStorageData.population);
   worldMap.init();
 } else {
+  console.log('map fetch API');
   Promise.all([
     fetch('https://api.covid19api.com/summary'),
     fetch('https://restcountries-v1.p.rapidapi.com/all', {

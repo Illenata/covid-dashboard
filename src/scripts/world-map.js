@@ -4,23 +4,28 @@ import countryBorder from './custom.geo.json';
 
 export default class WorldMap {
   constructor(covidData, populationCoordsData) {
-    this.mymap = L.map('mapid').setView([40, 8], 2);
+    this.mymap = L.map('mapid', {
+      zoomSnap: 0.1,
+      worldCopyJump: true,
+      maxBounds: [[-85, -180.0], [85, 180.0]],
+    }).setView([20, -20], 1.6)
+      .setMinZoom(1.5)
+      .setMaxZoom(4);
     this.covidData = covidData;
     this.populationCoordsData = populationCoordsData;
 
     this.unitMarkerSize = 0;
-
-    this.casesMarkersGroup = [];
-
+    this.markersGroup = [];
     this.popapContent = new Map();
-
     this.wrapper = document.querySelector('.map-wrapper');
+    this.buttonFullScreen = document.querySelector('.center_');
+    this.isFullScreen = false;
   }
 
   init() {
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
       attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
+      maxZoom: 4,
       id: 'mapbox/streets-v11',
       tileSize: 512,
       zoomOffset: -1,
@@ -32,10 +37,24 @@ export default class WorldMap {
     this.createMarkers();
     this.createLegend();
     this.customLayersNav();
+
+    this.buttonFullScreen.addEventListener('click', () => {
+      this.isFullScreen = !this.isFullScreen;
+
+      if (this.isFullScreen === true) {
+        this.mymap
+          .invalidateSize()
+          .setView([50, -80], 2);
+      } else {
+        this.mymap
+          .invalidateSize()
+          .setView([20, -20], 1.6);
+      }
+    });
   }
 
   getUnitForRadiusOfMarkerSize() {
-    const maxSize = 50;
+    const maxSize = 40;
     const totalCasesArr = [];
 
     for (let i = 0; i < this.covidData.Countries.length; i += 1) {
@@ -43,11 +62,10 @@ export default class WorldMap {
     }
 
     const maxNum = (arr) => arr.reduce((a, b) => (a > b ? a : b));
-
     this.unitMarkerSize = maxSize / maxNum(totalCasesArr);
   }
 
-  addMarkers(colorCircle, type, arrayCircles, name, i, j) {
+  addMarkers(colorCircle, type, name, i, j) {
     const minSize = 3;
     const circle = L.circleMarker([this.populationCoordsData[j].latlng[0],
       this.populationCoordsData[j].latlng[1]], {
@@ -63,8 +81,7 @@ export default class WorldMap {
       `<b>${this.covidData.Countries[i].Country}</b>
     <br>${name}: ${type}`);
 
-    circle.bindPopup(`<b>${this.covidData.Countries[i].Country}</b>
-    <br>${name}: ${type}`);
+    circle.bindPopup(this.popapContent.get(this.covidData.Countries[i].CountryCode));
 
     circle.on('mouseover', () => {
       circle.openPopup();
@@ -73,7 +90,7 @@ export default class WorldMap {
       circle.closePopup();
     });
 
-    arrayCircles.push(circle);
+    this.markersGroup.push(circle);
   }
 
   customLayersNav() {
@@ -82,9 +99,8 @@ export default class WorldMap {
         const controlLayersElem = document.querySelector('.group-type');
         return controlLayersElem;
       },
-      onRemove() {
-        // Nothing to do here
-      },
+      // onRemove() {
+      // },
     });
     L.control.customControl = function createControl(opts) {
       return new L.Control.CustomControl(opts);
@@ -96,7 +112,7 @@ export default class WorldMap {
     for (let i = 0; i < this.covidData.Countries.length; i += 1) {
       for (let j = 0; j < this.populationCoordsData.length; j += 1) {
         if (this.covidData.Countries[i].CountryCode === this.populationCoordsData[j].alpha2Code) {
-          this.addMarkers('red', this.covidData.Countries[i].TotalConfirmed, this.casesMarkersGroup, 'Cases', i, j);
+          this.addMarkers('red', this.covidData.Countries[i].TotalConfirmed, 'Cases', i, j);
 
           const people = this.populationCoordsData[j].population;
           const absoluteElem = document.querySelector('.value-absolute');
@@ -118,18 +134,18 @@ export default class WorldMap {
           const minSize = 3;
           const calculateRer100k = (data) => Math.round((data / people) * 100000);
           const calcRadius = (data) => minSize + (data * this.unitMarkerSize);
-          const changeMarker = (markers, data, name, popapContent, setColor) => {
-            markers[i].setRadius(calcRadius(data));
+          const changeMarker = (data, name, setColor) => {
+            this.markersGroup[i].setRadius(calcRadius(data));
 
-            markers[i].setPopupContent(`<b>${country}</b>
+            this.markersGroup[i].setPopupContent(`<b>${country}</b>
                 <br>${name}: ${data}`);
 
-            markers[i].setStyle({
+            this.markersGroup[i].setStyle({
               color: setColor,
               fillColor: setColor,
             });
 
-            popapContent.set(this.covidData.Countries[i].CountryCode,
+            this.popapContent.set(this.covidData.Countries[i].CountryCode,
               `<b>${country}</b>
             <br>${name}: ${data}`);
           };
@@ -137,33 +153,33 @@ export default class WorldMap {
           this.wrapper.addEventListener('click', () => {
             if (casesElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
-                changeMarker(this.casesMarkersGroup, totalCases, 'Cases', this.popapContent, 'red');
+                changeMarker(totalCases, 'Cases', 'red');
               } else if (absoluteElem.checked && lastDayElem.checked) {
-                changeMarker(this.casesMarkersGroup, dailyCases, 'Daily cases', this.popapContent, 'red');
+                changeMarker(dailyCases, 'Daily cases', 'red');
               } else if (coefElem.checked && allTimeElem.checked) {
-                changeMarker(this.casesMarkersGroup, calculateRer100k(totalCases), 'Cases per 100k', this.popapContent, 'red');
+                changeMarker(calculateRer100k(totalCases), 'Cases per 100k', 'red');
               } else {
-                changeMarker(this.casesMarkersGroup, calculateRer100k(dailyCases), 'Daily cases per 100k', this.popapContent, 'red');
+                changeMarker(calculateRer100k(dailyCases), 'Daily cases per 100k', 'red');
               }
             } if (recoveredElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
-                changeMarker(this.casesMarkersGroup, totalRecovered, 'Recovered', this.popapContent, 'green');
+                changeMarker(totalRecovered, 'Recovered', 'green');
               } else if (absoluteElem.checked && lastDayElem.checked) {
-                changeMarker(this.casesMarkersGroup, dailyRecovered, 'Daily recovered', this.popapContent, 'green');
+                changeMarker(dailyRecovered, 'Daily recovered', 'green');
               } else if (coefElem.checked && allTimeElem.checked) {
-                changeMarker(this.casesMarkersGroup, calculateRer100k(totalRecovered), 'Recovered per 100k', this.popapContent, 'green');
+                changeMarker(calculateRer100k(totalRecovered), 'Recovered per 100k', 'green');
               } else {
-                changeMarker(this.casesMarkersGroup, calculateRer100k(dailyRecovered), 'Daily recovered per 100k', this.popapContent, 'green');
+                changeMarker(calculateRer100k(dailyRecovered), 'Daily recovered per 100k', 'green');
               }
             } if (deathsElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
-                changeMarker(this.casesMarkersGroup, totalDeaths, 'Deaths', this.popapContent, 'black');
+                changeMarker(totalDeaths, 'Deaths', 'black');
               } else if (absoluteElem.checked && lastDayElem.checked) {
-                changeMarker(this.casesMarkersGroup, dailyDeaths, 'Daily deaths', this.popapContent, 'black');
+                changeMarker(dailyDeaths, 'Daily deaths', 'black');
               } else if (coefElem.checked && allTimeElem.checked) {
-                changeMarker(this.casesMarkersGroup, calculateRer100k(totalDeaths), 'Recovered per 100k', this.popapContent, 'black');
+                changeMarker(calculateRer100k(totalDeaths), 'Deaths per 100k', 'black');
               } else {
-                changeMarker(this.casesMarkersGroup, calculateRer100k(dailyDeaths), 'Daily deaths per 100k', this.popapContent, 'black');
+                changeMarker(calculateRer100k(dailyDeaths), 'Daily deaths per 100k', 'black');
               }
             }
           });
@@ -251,6 +267,6 @@ export default class WorldMap {
       });
     });
 
-    this.mymap.fitBounds(geojson.getBounds());
+    // this.mymap.fitBounds(geojson.getBounds());
   }
 }

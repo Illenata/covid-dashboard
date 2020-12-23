@@ -29,6 +29,7 @@ export default class Grid {
       if (i === 4) {
         this.createSections('right', `${this.table}`, `${this.graph}`);
         this.addEvent(`${this.graph}`);
+        this.addEvent(`${this.table}`);
       }
     }
   }
@@ -52,11 +53,11 @@ export default class Grid {
     this.grid.append(this.section);
     this.section.classList.add(`${name}`);
     if (secondElement) {
-      first.id = `${firstElement}`;
       second.id = `${secondElement}`;
       first.classList.add(`${firstElement}`);
       second.classList.add(`${secondElement}`);
       this.section.append(first, second);
+      this.addBtns(`${firstElement}`);
       this.addBtns(`${secondElement}`);
     } else if (firstElement) {
       first.id = `${firstElement}`;

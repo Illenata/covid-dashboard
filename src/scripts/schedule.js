@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable object-shorthand */
 import Chart from 'chart.js';
 
 export default class Shedule {
@@ -7,31 +9,24 @@ export default class Shedule {
       data: {
         labels: y,
         datasets: [{
-          minBarLength: 10,
+          minBarLength: 2,
           pointRadius: 10,
           label: '# Cases ',
           data: x,
-          backgroundColor: [
-            'rgba(200, 0, 0, 1)',
-          ],
-          borderColor: [
-            'rgba(0, 255, 100, 1)',
-          ],
-          borderWidth: 1,
+          borderWidth: 3,
+          backgroundColor: function () {
+            return 'red';
+          },
         }],
       },
       options: {
+        aspectRatio: 2.35,
         tooltips: {
           bodyFontSize: 12,
         },
         scales: {
           xAxes: [{
-            ticks: {
-              min: 'Май',
-              maxTicksLimit: 6,
-              stepSize: 30,
-              fontSize: 10,
-            },
+            stacked: true,
             scaleLabel: {
               display: true,
               labelString: 'Date',
@@ -52,7 +47,7 @@ export default class Shedule {
             ticks: {
               max: 80000000,
               maxTicksLimit: 10,
-              fontSize: 10,
+              fontSize: 12,
               beginAtZero: true,
             },
           }],
