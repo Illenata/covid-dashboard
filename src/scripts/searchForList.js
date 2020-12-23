@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 export default class Search {
   constructor() {
     this.appendingPlace = null;
@@ -10,7 +11,7 @@ export default class Search {
     input.placeholder = 'Search';
     this.appendingPlace.append(input);
 
-    input.oninput = function () {
+    input.oninput = function searchValue() {
       const content = document.querySelectorAll('.cases-by-country__item');
       const value = this.value.trim().toLowerCase();
 

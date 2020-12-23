@@ -1,7 +1,6 @@
-/* eslint-disable no-shadow */
-/* eslint-disable no-use-before-define */
-/* eslint-disable no-restricted-syntax */
+/* eslint-disable */
 import Search from './searchForList';
+import Observable from './observer';
 
 export default class Tables {
   constructor() {
@@ -101,7 +100,7 @@ export default class Tables {
       createOption('NewRecovered', 'Last Day Recovered'),
       createOption('NewConfirmedPer100k', 'Last Day Cases per 100k'),
       createOption('NewDeathsPer100k', 'Last Day Deaths per 100k'),
-      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k'),
+      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k', 'recovered'),
     );
 
     // Container with cases/deaths/recovered numbers by country
@@ -109,9 +108,7 @@ export default class Tables {
     const casesByCountryHeader = document.createElement('div');
 
     casesByCountry.classList.add('cases-by-country');
-    casesByCountryHeader.innerHTML = `
-      <h1>Cases by country</h1>
-    `;
+    casesByCountryHeader.innerHTML = '<h1>Cases by country</h1>';
     casesByCountryHeader.classList.add('cases-by-country__header');
 
     const casesByCountryList = document.createElement('div');
@@ -159,7 +156,7 @@ export default class Tables {
         `;
         casesByCountryItem.addEventListener('click', () => {
           this.chosenCountry = index;
-          clearTable();
+          this.clearTable();
           this.renderTable(index);
         });
         casesByCountryList.append(casesByCountryItem);
@@ -179,6 +176,43 @@ export default class Tables {
       `;
       clearTable();
       this.renderTable(0);
+      switch (event.target.value) {
+        case 'TotalConfirmed':
+          Observable.notify('cases', 'absolute', 'allTime');
+          break;
+        case 'TotalDeaths':
+          Observable.notify('deaths', 'absolute', 'allTime');
+          break;
+        case 'TotalRecovered':
+          Observable.notify('recovered', 'absolute', 'allTime');
+          break;
+        case 'TotalConfirmedPer100k':
+          Observable.notify('cases', 'coef', 'allTime');
+          break;
+        case 'TotalDeathsPer100k':
+          Observable.notify('deaths', 'coef', 'allTime');
+          break;
+        case 'TotalRecoveredPer100k':
+          Observable.notify('recovered', 'coef', 'allTime');
+          break;
+        case 'NewConfirmed':
+          Observable.notify('cases', 'absolute', 'lastDay');
+          break;
+        case 'NewDeaths':
+          Observable.notify('deaths', 'absolute', 'lastDay');
+          break;
+        case 'NewRecovered':
+          Observable.notify('recovered', 'absolute', 'lastDay');
+          break;
+        case 'NewConfirmedPer100k':
+          Observable.notify('cases', 'coef', 'lastDay');
+          break;
+        case 'NewDeathsPer100k':
+          Observable.notify('deaths', 'coef', 'lastDay');
+          break;
+        default:
+          Observable.notify('recovered', 'coef', 'lastDay');
+      }
     });
 
     selectBlock.append(select, totalNumber);
@@ -189,7 +223,10 @@ export default class Tables {
   }
 
   async renderTable(index) {
-    const table = document.querySelector('#table');
+    const container = document.querySelector('.table');
+    const table = document.createElement('div');
+    table.id = 'table';
+    container.append(table);
     table.innerHTML = `
       <div class="country-name">
         <span>
@@ -240,5 +277,10 @@ export default class Tables {
         </tr>
       </table>
     `;
+  }
+
+  clearTable() {
+    const table = document.querySelector('#table');
+    table.replaceWith();
   }
 }

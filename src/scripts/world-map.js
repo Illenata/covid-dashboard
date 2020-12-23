@@ -1,6 +1,7 @@
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import countryBorder from './custom.geo.json';
+import Observable from './observer';
 
 export default class WorldMap {
   constructor(covidData, populationCoordsData) {
@@ -167,43 +168,55 @@ export default class WorldMap {
             if (casesElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
                 changeMarker(totalCases, 'Total Cases', 'red');
+                Observable.notify('cases', 'absolute', 'allTime');
                 this.typeData.textContent = 'Total Cases';
               } else if (absoluteElem.checked && lastDayElem.checked) {
                 changeMarker(dailyCases, 'Last Day Cases', 'red');
+                Observable.notify('cases', 'absolute', 'lastDay');
                 this.typeData.textContent = 'Last Day Cases';
               } else if (coefElem.checked && allTimeElem.checked) {
                 changeMarker(calculateRer100k(totalCases), 'Total Cases per 100k', 'red');
+                Observable.notify('cases', 'coef', 'allTime');
                 this.typeData.textContent = 'Total Cases per 100k';
               } else {
                 changeMarker(calculateRer100k(dailyCases), 'Last Day Cases per 100k', 'red');
+                Observable.notify('cases', 'coef', 'lastDay');
                 this.typeData.textContent = 'Last Day Cases per 100k';
               }
             } if (recoveredElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
                 changeMarker(totalRecovered, 'Total Recovered', 'green');
+                Observable.notify('recovered', 'absolute', 'allTime');
                 this.typeData.textContent = 'Total Recovered';
               } else if (absoluteElem.checked && lastDayElem.checked) {
                 changeMarker(dailyRecovered, 'Last Day Recovered', 'green');
+                Observable.notify('recovered', 'absolute', 'lastDay');
                 this.typeData.textContent = 'Last Day Recovered';
               } else if (coefElem.checked && allTimeElem.checked) {
                 changeMarker(calculateRer100k(totalRecovered), 'Total Recovered per 100k', 'green');
+                Observable.notify('recovered', 'coef', 'allTime');
                 this.typeData.textContent = 'Total Recovered per 100k';
               } else {
                 changeMarker(calculateRer100k(dailyRecovered), 'Last Day Recovered per 100k', 'green');
+                Observable.notify('recovered', 'coef', 'lastDay');
                 this.typeData.textContent = 'Last Day Recovered per 100k';
               }
             } if (deathsElem.checked) {
               if (absoluteElem.checked && allTimeElem.checked) {
                 changeMarker(totalDeaths, 'Total Deaths', 'black');
+                Observable.notify('deaths', 'absolute', 'allTime');
                 this.typeData.textContent = 'Total Deaths';
               } else if (absoluteElem.checked && lastDayElem.checked) {
                 changeMarker(dailyDeaths, 'Last Day Deaths', 'black');
+                Observable.notify('deaths', 'absolute', 'lastDay');
                 this.typeData.textContent = 'Last Day Deaths';
               } else if (coefElem.checked && allTimeElem.checked) {
                 changeMarker(calculateRer100k(totalDeaths), 'Total Deaths per 100k', 'black');
+                Observable.notify('deaths', 'coef', 'allTime');
                 this.typeData.textContent = 'Total Deaths per 100k';
               } else {
                 changeMarker(calculateRer100k(dailyDeaths), 'Last Day Deaths per 100k', 'black');
+                Observable.notify('deaths', 'coef', 'lastDay');
                 this.typeData.textContent = 'Last Day Deaths per 100k';
               }
             }
@@ -277,5 +290,82 @@ export default class WorldMap {
         this.geojson.resetStyle(layer);
       });
     });
+  }
+
+  update(state, value, time) {
+    const absoluteElem = document.querySelector('.value-absolute');
+    const coefElem = document.querySelector('.value-coefficient');
+    const allTimeElem = document.querySelector('.time-all');
+    const lastDayElem = document.querySelector('.time-last-day');
+    const casesElem = document.querySelector('.cases');
+    const recoveredElem = document.querySelector('.recovered');
+    const deathsElem = document.querySelector('.deaths');
+    if (state === 'cases') {
+      if (value === 'absolute' && time === 'allTime') {
+        casesElem.checked = true;
+        absoluteElem.checked = true;
+        allTimeElem.checked = true;
+        this.typeData.textContent = 'Total Cases';
+      } else if (value === 'absolute' && time === 'lastDay') {
+        casesElem.checked = true;
+        absoluteElem.checked = true;
+        lastDayElem.checked = true;
+        this.typeData.textContent = 'Last Day Cases';
+      } else if (value === 'coef' && time === 'allTime') {
+        casesElem.checked = true;
+        coefElem.checked = true;
+        allTimeElem.checked = true;
+        this.typeData.textContent = 'Total Cases per 100k';
+      } else {
+        casesElem.checked = true;
+        coefElem.checked = true;
+        lastDayElem.checked = true;
+        this.typeData.textContent = 'Last Day Cases per 100k';
+      }
+    } if (state === 'recovered') {
+      if (value === 'absolute' && time === 'allTime') {
+        recoveredElem.checked = true;
+        absoluteElem.checked = true;
+        allTimeElem.checked = true;
+        this.typeData.textContent = 'Total Recovered';
+      } else if (value === 'absolute' && time === 'lastDay') {
+        recoveredElem.checked = true;
+        absoluteElem.checked = true;
+        lastDayElem.checked = true;
+        this.typeData.textContent = 'Last Day Recovered';
+      } else if (value === 'coef' && time === 'allTime') {
+        recoveredElem.checked = true;
+        coefElem.checked = true;
+        allTimeElem.checked = true;
+        this.typeData.textContent = 'Total Recovered per 100k';
+      } else {
+        recoveredElem.checked = true;
+        coefElem.checked = true;
+        lastDayElem.checked = true;
+        this.typeData.textContent = 'Last Day Recovered per 100k';
+      }
+    } if (state === 'deaths') {
+      if (value === 'absolute' && time === 'allTime') {
+        deathsElem.checked = true;
+        absoluteElem.checked = true;
+        allTimeElem.checked = true;
+        this.typeData.textContent = 'Total Deaths';
+      } else if (value === 'absolute' && time === 'lastDay') {
+        deathsElem.checked = true;
+        absoluteElem.checked = true;
+        lastDayElem.checked = true;
+        this.typeData.textContent = 'Last Day Deaths';
+      } else if (value === 'coef' && time === 'allTime') {
+        deathsElem.checked = true;
+        coefElem.checked = true;
+        allTimeElem.checked = true;
+        this.typeData.textContent = 'Total Deaths per 100k';
+      } else {
+        deathsElem.checked = true;
+        coefElem.checked = true;
+        lastDayElem.checked = true;
+        this.typeData.textContent = 'Last Day Deaths per 100k';
+      }
+    }
   }
 }
