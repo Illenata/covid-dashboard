@@ -22,7 +22,7 @@ export default class Shedule {
         {
           minBarLength: 2,
           pointRadius: 3,
-          label: '# reserved ',
+          label: '# recovered ',
           data: a,
           borderWidth: 1,
           backgroundColor: function () {
