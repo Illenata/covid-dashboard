@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable no-shadow */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-restricted-syntax */
