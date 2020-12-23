@@ -8,7 +8,7 @@ import Grid from './scripts/grid';
 import pic from './scripts/schedule';
 import Tables from './scripts/tables';
 import MapElements from './scripts/createMapElements';
-import Observer from './scripts/allButtons';
+import Observable from './scripts/allButtons';
 
 const grid = new Grid();
 grid.init();
@@ -20,7 +20,8 @@ mapElements.init();
 const checkLocalStorageData = new CheckLocalStorageData();
 checkLocalStorageData.init();
 
-if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation) {
+if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
+  && checkLocalStorageData.flag) {
   const worldMap = new WorldMap(checkLocalStorageData.covidData,
     checkLocalStorageData.population);
   worldMap.init();
@@ -46,6 +47,7 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
         'x-rapidapi-host': 'restcountries-v1.p.rapidapi.com',
       },
     }),
+    fetch('https://restcountries.eu/rest/v2/all?fields=name;population;flag;alpha2Code'),
   ]).then((responses) => Promise.all(responses.map((r) => r.json())))
     .then((data) => {
       const worldMap = new WorldMap(data[0], data[1]);
@@ -61,6 +63,7 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation)
       // });
       localStorage.setItem('covidDataStorage', JSON.stringify(data[0]));
       localStorage.setItem('countryPopulation', JSON.stringify(data[1]));
+      localStorage.setItem('countryPopulationFlag', JSON.stringify(data[2]));
     });
 }
 
@@ -72,5 +75,26 @@ const tables = new Tables();
 tables.init();
 area.append(pic);
 
-const typeDataMap = document.querySelector('.map-data-type');
-const observer = new Observer();
+document.addEventListener('DOMContentLoaded', () => {
+  const typeDataMap = document.querySelector('.map-data-type');
+  const select = document.querySelector('.select');
+  const option = document.querySelector('option');
+  const mapwrapper = document.querySelector('.map-wrapper');
+
+  console.log(typeDataMap.textContent, option.textContent);
+
+  const headingsObserver = new Observable();
+
+  headingsObserver.subscribe(typeDataMap.textContent);
+  headingsObserver.subscribe(option.textContent);
+
+  document.body.addEventListener('click', (e) => {
+    let data = '';
+    if (e.target === select) {
+      data = option.textContent;
+    } else if (e.target === mapwrapper) {
+      data = typeDataMap.textContent;
+    }
+    headingsObserver.notify(data);
+  });
+});
