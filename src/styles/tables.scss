@@ -30,9 +30,10 @@
     }
 
     .total-number {
-      font-size: 2em;
-      font-weight: bold;
-      color: red;
+      p {
+        font-size: 2em;
+        font-weight: bold;
+      }
     }
   }
 
@@ -46,7 +47,7 @@
       justify-content: space-evenly;
       height: 70px;
       h1 {
-        font-size: 1.5em;
+        font-size: 1.2em;
       }
       input {
         width: 90%;
@@ -73,20 +74,23 @@
     .cases-by-country__item {
       border-bottom: 1px solid #4e4d4d;
       padding: 3px;
-
-      span:first-child {
-        font-weight: bold;
-      }
-
+      cursor: pointer;
       span {
+        transition: color .2s;
         img {
           height: 0.9em;
           margin: 0 8px;
         }
       }
+      span:first-child {
+        font-weight: bold;
+      }
     }
     .cases-by-country__item:last-child {
       border: none;
+    }
+    .cases-by-country__item:hover {
+      background-color: rgba(255, 255, 255, 0.08);
     }
   }
 
@@ -118,21 +122,13 @@
   table {
     width: 100%;
     border-spacing: 0;
-    border: 1px solid #1d1515b7;
+    border: 1px solid #4e4d4d;
     tr {
       td {
         padding: 4px;
-        border-top: 1px solid #1d1515b7;
+        border-top: 1px solid #4e4d4d;
       }
-      .td-cases {
-        color: red;
-        font-weight: bold;
-      }
-      .td-deaths {
-        font-weight: bold;
-      }
-      .td-recovered {
-        color: green;
+      .bold {
         font-weight: bold;
       }
     }
