@@ -20,11 +20,20 @@ footer {
   display: flex;
   justify-content: space-around;
   align-items: center;
-
 }
 footer span{
   color: rgb(207, 82, 82);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 24px;
   font-weight: 800;
+}
+
+.color-cases {
+  color: red;
+}
+.color-deaths {
+  color: darkorchid;
+}
+.color-recovered {
+  color: green;
 }
