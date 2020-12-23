@@ -6,6 +6,7 @@ import pic from './scripts/schedule';
 import Tables from './scripts/tables';
 import MapElements from './scripts/createMapElements';
 import Observable from './scripts/observer';
+import clickToMap from './scripts/clickMapToTable';
 
 const grid = new Grid();
 grid.init();
@@ -27,7 +28,7 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
 
   worldMap.geojson.eachLayer((layer) => {
     layer.on('click', () => {
-      console.log(layer.feature.properties.wb_a2);
+      clickToMap(layer.feature.properties.wb_a2);
     });
   });
 } else {
@@ -50,7 +51,7 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
 
       worldMap.geojson.eachLayer((layer) => {
         layer.on('click', () => {
-          console.log(layer.feature.properties.wb_a2);
+          clickToMap(layer.feature.properties.wb_a2);
         });
       });
 
