@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Search from './searchForList';
 import Observable from './observer';
 
@@ -99,7 +100,7 @@ export default class Tables {
       createOption('NewRecovered', 'Last Day Recovered'),
       createOption('NewConfirmedPer100k', 'Last Day Cases per 100k'),
       createOption('NewDeathsPer100k', 'Last Day Deaths per 100k'),
-      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k'),
+      createOption('NewRecoveredPer100k', 'Last Day Recovered per 100k', 'recovered'),
     );
 
     // Container with cases/deaths/recovered numbers by country
@@ -107,9 +108,7 @@ export default class Tables {
     const casesByCountryHeader = document.createElement('div');
 
     casesByCountry.classList.add('cases-by-country');
-    casesByCountryHeader.innerHTML = `
-      <h1>Cases by country</h1>
-    `;
+    casesByCountryHeader.innerHTML = '<h1>Cases by country</h1>';
     casesByCountryHeader.classList.add('cases-by-country__header');
 
     const casesByCountryList = document.createElement('div');
@@ -157,7 +156,7 @@ export default class Tables {
         `;
         casesByCountryItem.addEventListener('click', () => {
           this.chosenCountry = index;
-          clearTable();
+          this.clearTable();
           this.renderTable(index);
         });
         casesByCountryList.append(casesByCountryItem);
@@ -224,7 +223,10 @@ export default class Tables {
   }
 
   async renderTable(index) {
-    const table = document.querySelector('#table');
+    const container = document.querySelector('.table');
+    const table = document.createElement('div');
+    table.id = 'table';
+    container.append(table);
     table.innerHTML = `
       <div class="country-name">
         <span>
@@ -275,5 +277,10 @@ export default class Tables {
         </tr>
       </table>
     `;
+  }
+
+  clearTable() {
+    const table = document.querySelector('#table');
+    table.replaceWith();
   }
 }

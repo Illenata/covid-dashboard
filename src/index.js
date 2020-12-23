@@ -2,7 +2,7 @@ import './styles/styles.scss';
 import CheckLocalStorageData from './scripts/checkLocalStorageData';
 import WorldMap from './scripts/world-map';
 import Grid from './scripts/grid';
-import pic from './scripts/schedule';
+import Shedule from './scripts/schedule';
 import Tables from './scripts/tables';
 import MapElements from './scripts/createMapElements';
 import Observable from './scripts/observer';
@@ -11,7 +11,7 @@ import clickToMap from './scripts/clickMapToTable';
 const grid = new Grid();
 grid.init();
 
-const area = document.querySelector('.graph');
+// const area = document.querySelector('.graph');
 const mapElements = new MapElements();
 mapElements.init();
 
@@ -63,4 +63,15 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
 
 const tables = new Tables();
 tables.init();
-area.append(pic);
+
+fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=all')
+  .then((response) => response.json().then((res) => console.log(res)));
+fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=all')
+  .then((response) => response.json().then((res) => {
+    const x = Object.values(res.cases);
+    const y = Object.keys(res.cases);
+    const a = Object.values(res.recovered);
+    const b = Object.values(res.deaths);
+    const cases = new Shedule(x, y, a, b);
+    cases.init();
+  }));

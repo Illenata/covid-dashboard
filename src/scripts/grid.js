@@ -28,7 +28,8 @@ export default class Grid {
       }
       if (i === 4) {
         this.createSections('right', `${this.table}`, `${this.graph}`);
-        this.addEvent('right');
+        this.addEvent(`${this.graph}`);
+        this.addEvent(`${this.table}`);
       }
     }
   }
@@ -52,24 +53,27 @@ export default class Grid {
     this.grid.append(this.section);
     this.section.classList.add(`${name}`);
     if (secondElement) {
-      first.id = `${firstElement}`;
       second.id = `${secondElement}`;
       first.classList.add(`${firstElement}`);
       second.classList.add(`${secondElement}`);
       this.section.append(first, second);
+      this.addBtns(`${firstElement}`);
+      this.addBtns(`${secondElement}`);
     } else if (firstElement) {
       first.id = `${firstElement}`;
       first.classList.add(`${firstElement}`);
       this.section.append(first);
     }
-    this.addBtns(`${name}`);
+    if (!secondElement) {
+      this.addBtns(`${name}`);
+    }
   }
 
   addBtns(x) {
     const btn = document.createElement('button');
     btn.classList.add('button', `${x}_`);
     btn.style.background = `no-repeat url(${img})`;
-    this.section.append(btn);
+    document.querySelector(`.${x}`).append(btn);
     btn.addEventListener('click', () => {
       this.makeOnfullscreen(x);
     });

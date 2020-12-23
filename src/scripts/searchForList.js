@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 export default class Search {
   constructor() {
     this.appendingPlace = null;
