@@ -64,8 +64,6 @@ export default class Tables {
     this.data.Global.TotalConfirmedPer100k = this.calculateGlobalPer100k(this.data.Global.TotalConfirmed);
     this.data.Global.TotalDeathsPer100k = this.calculateGlobalPer100k(this.data.Global.TotalDeaths);
     this.data.Global.TotalRecoveredPer100k = this.calculateGlobalPer100k(this.data.Global.TotalRecovered);
-
-    console.log(this.data);
   }
 
   renderList() {
@@ -145,10 +143,7 @@ export default class Tables {
           <span>${item.Country}</span>
         `;
         casesByCountryItem.addEventListener('click', () => {
-          console.log('clicked!', item[parameter], item.Country);
           this.chosenCountry = index;
-          console.log(this.chosenCountry);
-          console.log(item);
           this.clearTable();
           this.renderTable(index);
         });

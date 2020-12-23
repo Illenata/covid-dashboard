@@ -3,20 +3,44 @@
 import Chart from 'chart.js';
 
 export default class Shedule {
-  constructor(x, y) {
+  constructor(x, y, a, b) {
     this.sheduleConfig = {
-      type: 'bar',
+      type: 'line',
       data: {
         labels: y,
         datasets: [{
           minBarLength: 2,
-          pointRadius: 10,
+          pointRadius: 3,
           label: '# Cases ',
           data: x,
-          borderWidth: 3,
+          borderWidth: 1,
           backgroundColor: function () {
             return 'red';
           },
+          fill: false,
+        },
+        {
+          minBarLength: 2,
+          pointRadius: 3,
+          label: '# reserved ',
+          data: a,
+          borderWidth: 1,
+          backgroundColor: function () {
+            return 'green';
+          },
+          fill: false,
+
+        },
+        {
+          minBarLength: 2,
+          pointRadius: 3,
+          label: '# deaths ',
+          data: b,
+          borderWidth: 1,
+          backgroundColor: function () {
+            return 'black';
+          },
+          fill: false,
         }],
       },
       options: {
@@ -40,7 +64,7 @@ export default class Shedule {
             },
             scaleLabel: {
               display: true,
-              labelString: 'Cases',
+              labelString: 'counts',
               fontSize: 15,
             },
             type: 'linear',
