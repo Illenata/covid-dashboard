@@ -8,7 +8,7 @@ import Grid from './scripts/grid';
 import pic from './scripts/schedule';
 import Tables from './scripts/tables';
 import MapElements from './scripts/createMapElements';
-import Observable from './scripts/allButtons';
+import Observable from './scripts/observer';
 
 const grid = new Grid();
 grid.init();
@@ -20,11 +20,16 @@ mapElements.init();
 const checkLocalStorageData = new CheckLocalStorageData();
 checkLocalStorageData.init();
 
+// const headingsObserver = new Observable();
+
 if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
   && checkLocalStorageData.flag) {
   const worldMap = new WorldMap(checkLocalStorageData.covidData,
     checkLocalStorageData.population);
   worldMap.init();
+
+  Observable.subscribe(worldMap);
+
   worldMap.geojson.eachLayer((layer) => {
     layer.on('click', () => {
       console.log(layer.feature.properties.wb_a2); // код страны по клику
@@ -52,6 +57,9 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
     .then((data) => {
       const worldMap = new WorldMap(data[0], data[1]);
       worldMap.init();
+
+      Observable.subscribe(worldMap);
+
       worldMap.geojson.eachLayer((layer) => {
         layer.on('click', () => {
           console.log(layer.feature.properties.wb_a2); // код страны по клику
@@ -75,26 +83,24 @@ const tables = new Tables();
 tables.init();
 area.append(pic);
 
-document.addEventListener('DOMContentLoaded', () => {
-  const typeDataMap = document.querySelector('.map-data-type');
-  const select = document.querySelector('.select');
-  const option = document.querySelector('option');
-  const mapwrapper = document.querySelector('.map-wrapper');
+// document.addEventListener('DOMContentLoaded', () => {
+//   const typeDataMap = document.querySelector('.map-data-type');
+//   const select = document.querySelector('.select');
+//   const option = document.querySelector('option');
+//   const mapwrapper = document.querySelector('.map-wrapper');
 
-  console.log(typeDataMap.textContent, option.textContent);
+//   console.log(typeDataMap.textContent, option.textContent);
 
-  const headingsObserver = new Observable();
+//   headingsObserver.subscribe(typeDataMap.textContent);
+//   headingsObserver.subscribe(option.textContent);
 
-  headingsObserver.subscribe(typeDataMap.textContent);
-  headingsObserver.subscribe(option.textContent);
-
-  document.body.addEventListener('click', (e) => {
-    let data = '';
-    if (e.target === select) {
-      data = option.textContent;
-    } else if (e.target === mapwrapper) {
-      data = typeDataMap.textContent;
-    }
-    headingsObserver.notify(data);
-  });
-});
+//   document.body.addEventListener('click', (e) => {
+//     let data = '';
+//     if (e.target === select) {
+//       data = option.textContent;
+//     } else if (e.target === mapwrapper) {
+//       data = typeDataMap.textContent;
+//     }
+//     headingsObserver.notify(data);
+//   });
+// });

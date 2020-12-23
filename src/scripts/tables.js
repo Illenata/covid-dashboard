@@ -3,6 +3,7 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-restricted-syntax */
 import Search from './searchForList';
+import Observable from './observer';
 export default class Tables {
   constructor() {
     this.data = null;
@@ -160,6 +161,43 @@ export default class Tables {
       totalNumber.innerText = this.data.Global[event.target.value];
       this.clearTable();
       this.renderTable(0);
+      switch (event.target.value) {
+        case 'TotalConfirmed':
+          Observable.notify('cases', 'absolute', 'allTime');
+          break;
+        case 'TotalDeaths':
+          Observable.notify('deaths', 'absolute', 'allTime');
+          break;
+        case 'TotalRecovered':
+          Observable.notify('recovered', 'absolute', 'allTime');
+          break;
+        case 'TotalConfirmedPer100k':
+          Observable.notify('cases', 'coef', 'allTime');
+          break;
+        case 'TotalDeathsPer100k':
+          Observable.notify('deaths', 'coef', 'allTime');
+          break;
+        case 'TotalRecoveredPer100k':
+          Observable.notify('recovered', 'coef', 'allTime');
+          break;
+        case 'NewConfirmed':
+          Observable.notify('cases', 'absolute', 'lastDay');
+          break;
+        case 'NewDeaths':
+          Observable.notify('deaths', 'absolute', 'lastDay');
+          break;
+        case 'NewRecovered':
+          Observable.notify('recovered', 'absolute', 'lastDay');
+          break;
+        case 'NewConfirmedPer100k':
+          Observable.notify('cases', 'coef', 'lastDay');
+          break;
+        case 'NewDeathsPer100k':
+          Observable.notify('deaths', 'coef', 'lastDay');
+          break;
+        default:
+          Observable.notify('recovered', 'coef', 'lastDay');
+      };
     });
 
     selectBlock.append(select, totalNumber);
