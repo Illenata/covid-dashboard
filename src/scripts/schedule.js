@@ -49,7 +49,7 @@ export default class Shedule {
         }],
       },
       options: {
-        aspectRatio: 2.35,
+        aspectRatio: 2,
         tooltips: {
           bodyFontSize: 12,
         },

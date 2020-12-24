@@ -30,6 +30,9 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
       clickToMap(layer.feature.properties.wb_a2);
     });
   });
+
+  const tables = new Tables();
+  tables.init();
 } else {
   Promise.all([
     fetch('https://api.covid19api.com/summary'),
@@ -57,11 +60,11 @@ if (checkLocalStorageData.loadCovidData && checkLocalStorageData.loadPopulation
       localStorage.setItem('covidDataStorage', JSON.stringify(data[0]));
       localStorage.setItem('countryPopulation', JSON.stringify(data[1]));
       localStorage.setItem('countryPopulationFlag', JSON.stringify(data[2]));
+
+      const tables = new Tables();
+      tables.init();
     });
 }
-
-const tables = new Tables();
-tables.init();
 
 fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=all')
   .then((response) => response.json().then((res) => console.log(res)));
