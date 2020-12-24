@@ -11,7 +11,6 @@ import clickToMap from './scripts/clickMapToTable';
 const grid = new Grid();
 grid.init();
 
-// const area = document.querySelector('.graph');
 const mapElements = new MapElements();
 mapElements.init();
 

@@ -132,7 +132,7 @@ export default class Tables {
 
     const clearTable = () => {
       const table = document.querySelector('#table');
-      table.innerHTML = '';
+      table.replaceWith();
     };
 
     const defineColor = (str) => {
