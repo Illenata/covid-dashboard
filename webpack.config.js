@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const HTMLWebpackPlagin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -66,13 +67,34 @@ module.exports = {
     extensions: ['.js', '.jsx'],
     alias: {
       '@': path.resolve(__dirname, 'src'),
+      './images/layers.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/layers.png',
+      ),
+      './images/layers-2x.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/layers-2x.png',
+      ),
+      './images/marker-icon.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/marker-icon.png',
+      ),
+      './images/marker-icon-2x.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/marker-icon-2x.png',
+      ),
+      './images/marker-shadow.png$': path.resolve(
+        __dirname,
+        './node_modules/leaflet/dist/images/marker-shadow.png',
+      ),
     },
   },
   optimization: optimization(),
   devServer: {
     port: 4200,
-    hot: isDev,
     open: true,
+    hot: isDev,
+    injectHot: (compilerConfig) => compilerConfig.name === 'only-include',
   },
   devtool: sourceMap(),
   plugins: [
@@ -93,16 +115,16 @@ module.exports = {
           from: path.resolve(__dirname, 'src/assets/img'),
           to: path.resolve(__dirname, 'dist/img'),
         },
-        // {
-        //   from: path.resolve(__dirname, 'src/assets/audio'),
-        //   to: path.resolve(__dirname, 'dist/audio'),
-        // },
       ],
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
     }),
     new ESLintPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery',
+    }),
   ],
   module: {
     rules: [
