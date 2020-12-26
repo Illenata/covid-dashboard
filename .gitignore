@@ -10,3 +10,4 @@ lerna-debug.log*
 
 # build files
 /dist/
+/node_modules/
