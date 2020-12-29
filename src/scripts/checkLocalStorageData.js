@@ -1,4 +1,4 @@
-export default class ckeckLocalStorageData {
+export default class CkeckLocalStorageData {
   constructor() {
     this.loadCovidData = false;
     this.loadFlag = false;
@@ -17,7 +17,6 @@ export default class ckeckLocalStorageData {
       localStorage.setItem('dayStorage', currentDay);
       this.loadCovidData = false;
     } else {
-      // console.log(`map last update ${storageDay}`);
       this.loadCovidData = true;
     }
 
