@@ -75,10 +75,10 @@ fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=all')
   .then((response) => response.json().then((res) => console.log(res)));
 fetch('https://disease.sh/v3/covid-19/historical/all?lastdays=all')
   .then((response) => response.json().then((res) => {
-    const x = Object.values(res.cases);
-    const y = Object.keys(res.cases);
-    const a = Object.values(res.recovered);
-    const b = Object.values(res.deaths);
-    const cases = new Shedule(x, y, a, b);
+    const caseCount = Object.values(res.cases);
+    const period = Object.keys(res.cases);
+    const recoveredCount = Object.values(res.recovered);
+    const deathsCount = Object.values(res.deaths);
+    const cases = new Shedule(caseCount, period, recoveredCount, deathsCount);
     cases.init();
   }));
