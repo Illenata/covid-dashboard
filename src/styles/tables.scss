@@ -1,0 +1,145 @@
+.list {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+
+
+  .select-block,
+  .cases-by-country,
+  .update-date {
+    width: 100%;
+  }
+
+  .select-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    height: 12vh;
+    border: 1px solid #1d1515b7;
+
+    select {
+      width: 90%;
+      color: #9aa9b8;
+      background:#3b3939;
+      border: 1px solid #1d1515b7;
+    }
+
+    .total-number {
+      p {
+        font-size: 2em;
+        font-weight: bold;
+      }
+    }
+  }
+
+  .cases-by-country {
+    border: 1px solid #1d1515b7;
+
+    .cases-by-country__header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-evenly;
+      height: 70px;
+      h1 {
+        font-size: 1.2em;
+      }
+      input {
+        width: 90%;
+        padding: 0 16px;
+        color: #9aa9b8;
+        background:#3b3939;
+        border: 1px solid #1d1515b7;
+      }
+    }
+
+    .cases-by-country__list {
+      height: 50vh;
+      overflow-x: auto;
+    }
+    .cases-by-country__list::-webkit-scrollbar {
+      width: 8px;
+      background-color: #3b3939;
+      border-radius: 1rem;
+    }
+    .cases-by-country__list::-webkit-scrollbar-thumb {
+        background-color: #4e4d4d;
+        border-radius: 1rem;
+    }
+    .cases-by-country__item {
+      border-bottom: 1px solid #4e4d4d;
+      padding: 3px;
+      cursor: pointer;
+      span {
+        transition: color .2s;
+        img {
+          height: 0.9em;
+          margin: 0 8px;
+        }
+      }
+      span:first-child {
+        font-weight: bold;
+      }
+    }
+    .cases-by-country__item:last-child {
+      border: none;
+    }
+    .cases-by-country__item:hover {
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+
+  .update-date {
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #1d1515b7;
+  }
+}
+
+.table {
+  width: 100%;
+  padding: 8px;
+  .country-name {
+    width: 100%;
+    padding: 8px;
+    span {
+      font-size: 1.5em;
+      font-weight: bold;
+      img {
+        height: 0.9em;
+        margin-right: 16px;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    border-spacing: 0;
+    border: 1px solid #4e4d4d;
+    tr {
+      td {
+        padding: 4px;
+        border-top: 1px solid #4e4d4d;
+      }
+      .bold {
+        font-weight: bold;
+      }
+    }
+    tr:first-child {
+      td {
+        border-top: none;
+      }
+    }
+  }
+}
+
+.hide {
+  display: none;
+}
